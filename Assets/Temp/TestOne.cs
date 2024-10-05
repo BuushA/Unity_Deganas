@@ -16,7 +16,7 @@ public class TestOne : MonoBehaviour
     void Update()
     {
 
-
+    
      if(stop % 2 != 0)
      {
      MonoBehaviour.print("WORKS");
