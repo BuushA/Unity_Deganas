@@ -21,9 +21,14 @@ public class button_money : MonoBehaviour
         money_count.text = str_money;
     }
 
+    public void update_label()
+    {
+        string str_money = "Cash: " + (Global_values.money).ToString() + " $";
+        money_count.text = str_money;
+    }
+
     void Start()
     {
-        MonoBehaviour.print(Global_values.money);
        add_to_label(Global_values.money + 0);
     }
 
