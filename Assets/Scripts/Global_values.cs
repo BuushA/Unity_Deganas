@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Global_values : MonoBehaviour
 {
-
-    [SerializeField]
     public static float money;
-    [SerializeField]
     public static int hour;
+
+    
+    [SerializeField] private float starting_cash;
+    [SerializeField] private int starting_hour; //has to be [0;24] otherwise it's illogical
 
 
 
@@ -16,8 +18,7 @@ public class Global_values : MonoBehaviour
     //Load values FIRST
     void Awake()
     {
-        money = 1000f;
-        hour = 8;
-
+            money = starting_cash;
+            hour = starting_hour;
     }
 }
