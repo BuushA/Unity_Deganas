@@ -7,24 +7,39 @@ using TMPro;
 
 public class Panel_functions : MonoBehaviour
 {
-    //initial label names
-    [SerializeField] private TMP_Text Tunit_price; 
-
-    [SerializeField] private TMP_Text Tbuy_price;
-
-    public TMP_InputField InBuy_amount;
-
-    public button_money Money_manager;
 
 
    
+
+    //dependencies for script
+    [SerializeField] string item_name;
+    [SerializeField] Global_values GB_script;
+    public button_money Money_manager;
+
+    //labels - UI
+    [SerializeField] private TMP_Text Tunit_price; //price displayed under selling item
+    [SerializeField] private TMP_Text Tbuy_price;  //display calculated price
+    public TMP_InputField InBuy_amount; //get amount input
+
+
+    //variables both public and private;
+  
+    [HideInInspector]
+    public float buy_price;
+
+    //set price
+    private float item_price;
+    private float current_money;
+    private int amount;
+
     // Start is called before the first frame update
     void Start()
     {
         //Change label prices
         //try uses system
         try{ 
-            Tunit_price.text = (Prod_Prices.Gasoline).ToString();
+            item_price = GB_script.Dic_item_price[item_name];
+            Tunit_price.text = (item_price).ToString() + "$";
         }
         catch(NullReferenceException e)
         {
@@ -33,9 +48,6 @@ public class Panel_functions : MonoBehaviour
         
     }
 
-    [HideInInspector]
-    public float buy_price;
-    private int amount;
 
     //display and calculate the price
     public void New_amount(string M)
@@ -65,16 +77,17 @@ public class Panel_functions : MonoBehaviour
         //stop overflow
         if(amount < 100000)
         {
-        buy_price = amount * Prod_Prices.Gasoline;
-        Tbuy_price.text = (buy_price).ToString();
+        buy_price = amount * item_price;
+        Tbuy_price.text = (buy_price).ToString() + "$";
         }
 
     }
 
-    private float current_money;
+    
 
     //pop up a message
     public bool active_message = false;
+    //Coroutine for delaying
     IEnumerator label_message(float delay, string msg)
     {
         string tmp = Tbuy_price.text;
@@ -102,7 +115,8 @@ public class Panel_functions : MonoBehaviour
         }
         else
         {
-            Global_values.money -= current_money;
+            Global_values.money -= buy_price;
+            GB_script.add_amount_to_dic(item_name, amount);
             try {
                 Money_manager.update_label();
             }

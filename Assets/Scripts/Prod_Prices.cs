@@ -14,6 +14,12 @@ public class Prod_Prices : MonoBehaviour
     //add a configurable price for 1 unit
     [SerializeField] private float Gasoline_price;
 
+    //Global_values reference
+    [SerializeField] Global_values GB_script;
+
+
+
+
 
     //Serialize before Start()
     void Awake()
@@ -21,11 +27,14 @@ public class Prod_Prices : MonoBehaviour
         //load at initialization
         Gasoline = Gasoline_price;
 
+        //load prices into an array
+        float[] unit_price = {Gasoline_price, 10f};
 
 
-
-
+        //Initialize the dictionary inside Global_values script
+        GB_script.create_price_dic(unit_price);
     }
+
 
 
 }
