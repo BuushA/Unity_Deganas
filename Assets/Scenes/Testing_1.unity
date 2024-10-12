@@ -626,10 +626,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42d26bc0159f34c499cbb6484247d813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  item_name: Gasolline
+  GB_script: {fileID: 1244791800}
+  Money_manager: {fileID: 1106657921}
   Tunit_price: {fileID: 1129330199}
   Tbuy_price: {fileID: 2021606249}
   InBuy_amount: {fileID: 211696061}
-  Money_manager: {fileID: 1106657921}
   buy_price: 0
   active_message: 0
 --- !u!1 &366619980
@@ -1533,6 +1535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Gasoline_price: 10
+  GB_script: {fileID: 1244791800}
 --- !u!4 &1204854493
 Transform:
   m_ObjectHideFlags: 0
