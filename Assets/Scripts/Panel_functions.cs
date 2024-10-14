@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class Panel_functions : MonoBehaviour
 {
@@ -17,9 +19,11 @@ public class Panel_functions : MonoBehaviour
     public button_money Money_manager;
 
     //labels - UI
-    [SerializeField] private TMP_Text Tunit_price; //price displayed under selling item
-    [SerializeField] private TMP_Text Tbuy_price;  //display calculated price
+    [SerializeField] TMP_Text Tunit_price; //price displayed under selling item
+    [SerializeField] TMP_Text Tbuy_price;  //display calculated price
+    [SerializeField] TMP_Text Tb_max_amount; //for displaying max amount
     public TMP_InputField InBuy_amount; //get amount input
+    [SerializeField] TMP_Text Tunit_amount; //display how much of this unit you currently have
 
 
     //variables both public and private;
@@ -29,7 +33,6 @@ public class Panel_functions : MonoBehaviour
 
     //set price
     private float item_price;
-    private float current_money;
     private int amount;
 
     // Start is called before the first frame update
@@ -38,14 +41,17 @@ public class Panel_functions : MonoBehaviour
         //Change label prices
         //try uses system
         try{ 
+
             item_price = GB_script.Dic_item_price[item_name];
             Tunit_price.text = (item_price).ToString() + "$";
+            Tunit_amount.text = (amount + 0).ToString() + " of" + '\n' + item_name;
         }
         catch(NullReferenceException e)
         {
             Debug.Log("Tunit_price was not set");
         }
-        
+    
+        max_possible();
     }
 
 
@@ -99,9 +105,9 @@ public class Panel_functions : MonoBehaviour
 
     public void Buy_item()
     {
-        current_money = Global_values.money;
         
-        if(current_money < buy_price)
+        
+        if(Global_values.money < buy_price)
         {
             Debug.Log("Not enough cash");
 
@@ -118,7 +124,9 @@ public class Panel_functions : MonoBehaviour
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
             try {
+                //update amount and money labels;
                 Money_manager.update_money_label();
+                Tunit_amount.text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
             }
             catch (NullReferenceException e)
             {
@@ -126,4 +134,20 @@ public class Panel_functions : MonoBehaviour
             }
         }
     }
+
+
+    public void max_possible()
+    {
+        int amount_max = (int)(Global_values.money /  GB_script.Dic_item_price[item_name]);
+        buy_price = amount_max * item_price;
+
+        //set button text to amount
+        Tb_max_amount.text = amount_max.ToString() + " - maximum";
+        Tbuy_price.text = (buy_price).ToString() + "$";
+    }
+
 }
+
+
+
+
