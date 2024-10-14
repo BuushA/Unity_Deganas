@@ -118,7 +118,7 @@ public class Panel_functions : MonoBehaviour
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
             try {
-                Money_manager.update_label();
+                Money_manager.update_money_label();
             }
             catch (NullReferenceException e)
             {

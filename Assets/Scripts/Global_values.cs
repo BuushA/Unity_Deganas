@@ -6,7 +6,7 @@ using UnityEngine;
 public class Global_values : MonoBehaviour
 {
     public static float money;
-    public static int hour;
+    public static int time;
 
     
     [SerializeField] private float starting_cash;
@@ -21,13 +21,13 @@ public class Global_values : MonoBehaviour
     public Dictionary<string, int> Dic_item_amount = new Dictionary<string, int>();
 
 
-
     // Awake is called before the application starts
     //Load values FIRST
     void Awake()
     {
             money = starting_cash;
-            hour = starting_hour;
+            //time counted by hours
+            time = starting_hour;
     }
 
 
