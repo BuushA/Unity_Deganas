@@ -74,8 +74,8 @@ public class Panel_functions : MonoBehaviour
             Debug.Log("This nubmer cannot fith in an Int32");
         }
         
-        //stop overflow
-        if(amount < 100000)
+        //stop overflow and negative values
+        if(amount < 100000 &&amount > 0)
         {
         buy_price = amount * item_price;
         Tbuy_price.text = (buy_price).ToString() + "$";
