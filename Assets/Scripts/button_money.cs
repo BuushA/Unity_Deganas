@@ -59,7 +59,7 @@ public class button_money : MonoBehaviour
 
     public void add_to_money()
     {
-        Global_values.money += a;
+        Global_values.money += a*100;
         //add to a label
         update_money_label();
         //MonoBehaviour.print(Global_values.money);

@@ -9,10 +9,10 @@ public class Prod_Prices : MonoBehaviour
     //Object name + _price
     
     //add a static object
-    public static float Gasoline;
+    public static long Gasoline;
 
     //add a configurable price for 1 unit
-    [SerializeField] private float Gasoline_price;
+    [SerializeField] private long Gasoline_price;
 
     //Global_values reference
     [SerializeField] Global_values GB_script;
@@ -28,7 +28,7 @@ public class Prod_Prices : MonoBehaviour
         Gasoline = Gasoline_price;
 
         //load prices into an array
-        float[] unit_price = {Gasoline_price, 10f};
+        long[] unit_price = {Gasoline_price, 1000l};
 
 
         //Initialize the dictionary inside Global_values script

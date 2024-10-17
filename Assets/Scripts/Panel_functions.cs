@@ -25,11 +25,11 @@ public class Panel_functions : MonoBehaviour
     //variables both public and private;
   
     [HideInInspector]
-    public float buy_price;
+    public long buy_price;
 
     //set price
-    private float item_price;
-    private float current_money;
+    private long item_price;
+    private long current_money;
     private int amount;
 
     // Start is called before the first frame update
@@ -38,7 +38,7 @@ public class Panel_functions : MonoBehaviour
         //Change label prices
         //try uses system
         try{ 
-            item_price = GB_script.Dic_item_price[item_name];
+            item_price = GB_script.Dic_item_price[item_name]*100;
             Tunit_price.text = (item_price).ToString() + "$";
         }
         catch(NullReferenceException e)
