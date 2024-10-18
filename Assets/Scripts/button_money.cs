@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.UI;
 
 using TMPro;
@@ -67,6 +68,14 @@ public class button_money : MonoBehaviour
         //MonoBehaviour.print(Global_values.money);
 
         //update max_amount
-        panel_update.max_possible(false); //false = update only TEXT w\o buy_button
+        try
+        {
+            panel_update.max_possible(false); //false = update only TEXT w\o buy_button
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log("");
+        }
+        
     }
 }
