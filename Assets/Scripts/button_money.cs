@@ -15,6 +15,8 @@ public class button_money : MonoBehaviour
     private TMP_Text money_count;
     //for time
     [SerializeField] private TMP_Text Time_label;
+    
+    public Panel_functions panel_update; //update or change label updating entirely - automate it
 
     /*
     private void add_to_timeLabel(int t)
@@ -63,5 +65,8 @@ public class button_money : MonoBehaviour
         //add to a label
         update_money_label();
         //MonoBehaviour.print(Global_values.money);
+
+        //update max_amount
+        panel_update.max_possible(false); //false = update only TEXT w\o buy_button
     }
 }

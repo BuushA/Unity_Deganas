@@ -577,8 +577,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -484.28156, y: -126.94174}
-  m_SizeDelta: {x: -1156.1989, y: -320.1109}
+  m_AnchoredPosition: {x: -482.2326, y: -97.6}
+  m_SizeDelta: {x: -1152.101, y: -260.76}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &308303335
 MonoBehaviour:
@@ -637,6 +637,7 @@ MonoBehaviour:
   Tbuy_price: {fileID: 2021606249}
   InBuy_amount: {fileID: 211696061}
   Tunit_amount: {fileID: 839829453}
+  Tmax_amount: {fileID: 0}
   buy_price: 0
   active_message: 0
 --- !u!1 &338490546
@@ -1070,7 +1071,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 6.1999, y: 188.5}
+  m_AnchoredPosition: {x: 6.19989, y: 169.2}
   m_SizeDelta: {x: -46.801, y: 35.3873}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &873092692
@@ -1242,7 +1243,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.5, y: 110.5}
+  m_AnchoredPosition: {x: 4.5, y: 110.6}
   m_SizeDelta: {x: 98.691, y: 91.3875}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &874645167
