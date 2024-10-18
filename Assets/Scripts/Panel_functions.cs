@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System;
 
 using TMPro;
@@ -20,6 +22,8 @@ public class Panel_functions : MonoBehaviour
     [SerializeField] private TMP_Text Tunit_price; //price displayed under selling item
     [SerializeField] private TMP_Text Tbuy_price;  //display calculated price
     public TMP_InputField InBuy_amount; //get amount input
+    [SerializeField] TMP_Text Tunit_amount; //display how much of this unit you currently have
+    [SerializeField] TMP_Text Tmax_amount; //for displaying max amount
 
 
     //variables both public and private;
@@ -38,8 +42,11 @@ public class Panel_functions : MonoBehaviour
         //Change label prices
         //try uses system
         try{ 
-            item_price = GB_script.Dic_item_price[item_name]*100;
+            item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
             Tunit_price.text = (item_price).ToString() + "$";
+            Tunit_amount.text = (amount + 0).ToString() + " of" + '\n' + item_name;
+            max_possible(false); //init max possible amount to buy
+
         }
         catch(NullReferenceException e)
         {
@@ -119,6 +126,8 @@ public class Panel_functions : MonoBehaviour
             GB_script.add_amount_to_dic(item_name, amount);
             try {
                 Money_manager.update_money_label();
+                Tunit_amount.text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
+                max_possible(true);
             }
             catch (NullReferenceException e)
             {
@@ -126,4 +135,16 @@ public class Panel_functions : MonoBehaviour
             }
         }
     }
+
+    public void max_possible(bool part2)
+    {
+        long amount_max = Global_values.money /  GB_script.Dic_item_price[item_name];
+        Tmax_amount.text = amount_max.ToString() + " - maximum";
+
+
+        //execute only when requisted, For example, after pressing the max_button
+        if(part2 == true)
+            buy_price = amount_max * item_price;
+            Tbuy_price.text = (buy_price).ToString() + "$";
+        }
 }
