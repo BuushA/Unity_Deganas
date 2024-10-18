@@ -25,9 +25,11 @@ public class Global_values : MonoBehaviour
     //Load values FIRST
     void Awake()
     {
+        
+        
             money = starting_cash*100;
             //time counted by hours
-            time = starting_hour;
+            time = starting_hour;  
     }
 
 
