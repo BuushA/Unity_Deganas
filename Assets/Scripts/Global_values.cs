@@ -18,7 +18,7 @@ public class Global_values : MonoBehaviour
     //dictonary of all item prices per 1 unit
     public Dictionary<string, long> Dic_item_price = new Dictionary<string, long>();
     //dictionary of how many items are in possesion
-    public Dictionary<string, int> Dic_item_amount = new Dictionary<string, int>();
+    public Dictionary<string, long> Dic_item_amount = new Dictionary<string, long>();
 
 
     // Awake is called before the application starts
@@ -43,7 +43,7 @@ public class Global_values : MonoBehaviour
     }
 
 
-    public void add_amount_to_dic(string item_name, int amount)
+    public void add_amount_to_dic(string item_name, long amount)
     {
         if(Dic_item_amount.ContainsKey(item_name) == false)
         {
