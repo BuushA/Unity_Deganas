@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   request_UI: {fileID: 1194912582}
+  Stop: 0
 --- !u!4 &131280580
 Transform:
   m_ObjectHideFlags: 0

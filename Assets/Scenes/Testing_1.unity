@@ -1937,6 +1937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starting_cash: 100
   starting_hour: 32
+  base_demand: 0.5
 --- !u!4 &1244791801
 Transform:
   m_ObjectHideFlags: 0
@@ -2419,6 +2420,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   default_scene: Testing_2
+  GB_script: {fileID: 1244791800}
+  button_label: {fileID: 2042857922}
 --- !u!1 &1729711912
 GameObject:
   m_ObjectHideFlags: 0

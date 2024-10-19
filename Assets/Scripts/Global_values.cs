@@ -11,6 +11,7 @@ public class Global_values : MonoBehaviour
     
     [SerializeField] private long starting_cash;
     [SerializeField] private int starting_hour; //has to be [0;24] otherwise it's illogical
+    [SerializeField] private float base_demand;
 
     //Names of all the items
     public static string[] Items = {"Gasolline", "Soap"};
@@ -19,14 +20,14 @@ public class Global_values : MonoBehaviour
     public Dictionary<string, long> Dic_item_price = new Dictionary<string, long>();
     //dictionary of how many items are in possesion
     public Dictionary<string, long> Dic_item_amount = new Dictionary<string, long>();
+    //dictionary of total demand for the product
+    public Dictionary<string, float> Dic_item_demand = new Dictionary<string, float>();
 
 
     // Awake is called before the application starts
     //Load values FIRST
     void Awake()
     {
-        
-        
             money = starting_cash*100;
             //time counted by hours
             time = starting_hour;  
@@ -39,6 +40,17 @@ public class Global_values : MonoBehaviour
         for(int i = 0; i < item_len; i++)
         {
             Dic_item_price.Add(Items[i], unit_price[i]);
+        }
+    }
+
+
+    //every item will have the same demand at the start
+    public void Base_Demand_dic(float base_demand)
+    {
+        int item_len = Items.Length;
+        for(int i = 0; i < item_len; i++)
+        {
+            Dic_item_demand.Add(Items[i], base_demand);
         }
     }
 
