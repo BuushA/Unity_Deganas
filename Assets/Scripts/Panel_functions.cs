@@ -34,7 +34,7 @@ public class Panel_functions : MonoBehaviour
     //set price
     private long item_price;
     private long current_money;
-    private int amount;
+    private long amount;
 
     // Start is called before the first frame update
     void Start()
@@ -138,13 +138,14 @@ public class Panel_functions : MonoBehaviour
 
     public void max_possible(bool part2)
     {
-        long amount_max = Global_values.money /  GB_script.Dic_item_price[item_name];
-        Tmax_amount.text = amount_max.ToString() + " - maximum";
+        amount = Global_values.money /  GB_script.Dic_item_price[item_name];
+        Tmax_amount.text = amount.ToString() + " - maximum";
+        buy_price = amount * item_price;
 
 
         //execute only when requisted, For example, after pressing the max_button
         if(part2 == true)
-            buy_price = amount_max * item_price;
+
             Tbuy_price.text = (buy_price).ToString() + "$";
         }
 }
