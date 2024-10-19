@@ -27,31 +27,24 @@ public class button_money : MonoBehaviour
 
     public void update_money_label()
     {
-       string[] trump ={" ", "K","M","B","T","Qa","Qi","Sx","Se","Oc","No","De","Un"};//n nustato kuri trumpini naudos
-       int money_len = Global_values.money.ToString().Length;
-       
-       int n=(money_len-2)/3;
-       int m=(money_len-2)%3;//kiek reikia skaitmenu pries kableli
-       
-
+       string[] trump ={"","K","M","B","T","Qa","Qi","Sx","Se","Oc","No","De","Un"};//n nustato kuri trumpini naudos
+       int n=(((Global_values.money).ToString().Length)-3)/3;
+       int m=(((Global_values.money).ToString().Length)-3)%3+1;//kiek reikia skaitmenu pries kableli
+     
        string p="0";
-         if(m<1){
-            p="0";
-            m=0;
+         if(m<0){
+               p="0";
+             m=0;
          }
-
-          if (m>0)
-        {
-            p=(Global_values.money).ToString().Substring(0,m);
-        }
+         
+          if (m>0){
+                   p=(Global_values.money).ToString().Substring(0,m);}
         int k=2;
-        if((Global_values.money).ToString().Length<2)
-        {
+        if((Global_values.money).ToString().Length<2){
             k=(Global_values.money).ToString().Length;
         }
-        
-        string str_money = "Cash: " + p +","+(Global_values.money).ToString().Substring(m,k)+" " + trump[n] +"$";
- 
+       
+      string str_money = "Cash: " + p+","+(Global_values.money).ToString().Substring(m,k)+" " +trump[n] +"$";
         money_count.text = str_money;  
     }
 
