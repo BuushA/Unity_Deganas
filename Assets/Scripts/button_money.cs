@@ -19,18 +19,6 @@ public class button_money : MonoBehaviour
     
     public Panel_functions panel_update; //update or change label updating entirely - automate it
 
-    /*
-    private void add_to_timeLabel(int t)
-    {
-        int h = t % 24;
-        int d = t / 24;
-        if(t <= 0)
-            string day_and_hours = h.ToString() + " h";
-        else
-            string day_and_hours = d.ToString() + " d " + h.ToString() + " h";
-        Time_label = 
-    }
-    */
 
     private void to_label(string text, TMP_Text label)
     {
@@ -39,15 +27,38 @@ public class button_money : MonoBehaviour
 
     public void update_money_label()
     {
-        string str_money = "Cash: " + (Global_values.money).ToString() + " $";
-        money_count.text = str_money;
+       string[] trump ={" ", "K","M","B","T","Qa","Qi","Sx","Se","Oc","No","De","Un"};//n nustato kuri trumpini naudos
+       int money_len = Global_values.money.ToString().Length;
+       
+       int n=(money_len-2)/3;
+       int m=(money_len-2)%3;//kiek reikia skaitmenu pries kableli
+       
+
+       string p="0";
+         if(m<1){
+            p="0";
+            m=0;
+         }
+
+          if (m>0)
+        {
+            p=(Global_values.money).ToString().Substring(0,m);
+        }
+        int k=2;
+        if((Global_values.money).ToString().Length<2)
+        {
+            k=(Global_values.money).ToString().Length;
+        }
+        
+        string str_money = "Cash: " + p +","+(Global_values.money).ToString().Substring(m,k)+" " + trump[n] +"$";
+ 
+        money_count.text = str_money;  
     }
 
     void Start()
     {
         //money label
-        string str_money = "Cash: " + (Global_values.money + 0).ToString() + "$";
-        to_label(str_money, money_count);
+        update_money_label();
 
         //time label
         int h = Global_values.time % 24;
