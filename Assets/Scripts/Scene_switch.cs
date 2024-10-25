@@ -6,19 +6,43 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.Runtime.Serialization;
 using TMPro;
+using System.Runtime.InteropServices;
+using System.Reflection.Emit;
 
-public class Scene_switch : MonoBehaviour
+public class Main_Scene_manager : MonoBehaviour
 {
-    //major scene or next scene
-    [SerializeField] string default_scene = "Testing_2";
+    public static Main_Scene_manager reference;
+
+    //dependencies / scripts
     [SerializeField] Global_values GB_script;
+    [SerializeField] customer_script Customers;
+    private LabelMan Label_Manager;
+
+    //UI objects
+    [SerializeField] GameObject Work_UI;
+    [SerializeField] GameObject Managment_UI;
     [SerializeField] TMP_Text button_label;
 
 
+    void Awake()
+    {
+            //Init the start
+            Work_UI.SetActive(false);
+            Managment_UI.SetActive(true);
+            reference = this;
+    }
+
+    //init dependencies
+    void Start()
+    {
+        Label_Manager = LabelMan.reference;
+        Label_Manager.update_money_label(1);
+        Label_Manager.update_time_label(1);
+    }
 
 
     bool active_message = false;
-    //Coroutine for delaying
+    //Coroutine for delaying and showing a message
     IEnumerator label_message(float delay, string msg)
     {
         string tmp = button_label.text;
@@ -28,10 +52,8 @@ public class Scene_switch : MonoBehaviour
         active_message = false;
     }
 
-    public void switch_to_scene(string scene_name)
+    public void switch_to_scene()
     {
-        MonoBehaviour.print(scene_name);
-
         if(GB_script.Dic_item_amount.Count == 0)
         {
             active_message = true;
@@ -40,10 +62,42 @@ public class Scene_switch : MonoBehaviour
         //has items bought
         else
         {
-            if(scene_name != "")
-                SceneManager.LoadScene(scene_name, LoadSceneMode.Additive);
-            else
-                SceneManager.LoadScene(default_scene);
+            //change the time
+            int Starting_h = 8; //work day starts at 8
+            int Current_h = Global_values.time % 24; 
+            int time_difference = (Current_h - Starting_h);
+            //Calculate  8:00 clock again;
+            Global_values.time += 24 - time_difference;
+
+            //change the UI
+            Work_UI.SetActive(true);
+            Managment_UI.SetActive(false);
+            //update labels
+            Label_Manager.update_money_label(2);
+            Label_Manager.update_time_label(2);
+
+            //Init in customer_script.cs
+            Customers.Scene_init();
+        }
+    }
+
+    public void Revert_scenes()
+    {   
+        //change the UI
+        Managment_UI.SetActive(true);
+        Work_UI.SetActive(false);
+        //update labels
+        Label_Manager.update_money_label(1);
+        Label_Manager.update_time_label(1);
+        //Panel labels
+        Panel_functions Panel;
+        GameObject[] panels;
+        panels = GameObject.FindGameObjectsWithTag("Product_Panel");
+        foreach (GameObject pan in panels)
+        {   
+            Panel = pan.GetComponent<Panel_functions>();
+            MonoBehaviour.print(Panel);
+            Panel.update_labels();
         }
     }
 }

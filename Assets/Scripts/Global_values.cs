@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Globalization;
 
 public class Global_values : MonoBehaviour
 {
     public static long money;
     public static int time;
+    //pass the reference maby use a pointer (?)
+    public static Global_values reference;
 
     
     [SerializeField] private long starting_cash;
@@ -30,7 +33,8 @@ public class Global_values : MonoBehaviour
     {
             money = starting_cash*100;
             //time counted by hours
-            time = starting_hour;  
+            time = starting_hour; 
+            reference = this;
     }
 
 
@@ -56,17 +60,27 @@ public class Global_values : MonoBehaviour
 
 
     public void add_amount_to_dic(string item_name, long amount)
-    {
+    {   
+        try
+        {
+            Dic_item_amount[item_name] += amount;
+        }
+        catch (KeyNotFoundException e)
+        {
+            MonoBehaviour.print("Adding key");
+            Dic_item_amount.Add(item_name, amount);
+        }
+        /*
         if(Dic_item_amount.ContainsKey(item_name) == false)
         {
             Dic_item_amount.Add(item_name, amount);
+            MonoBehaviour.print("WTF");
         }
         else //if key already exists
         {
             Dic_item_amount[item_name] += amount;
-            
         }
-        Debug.Log(Dic_item_amount[item_name]);
+        */
     }
 
 }

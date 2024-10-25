@@ -31,6 +31,7 @@ public class Prod_Prices : MonoBehaviour
         long[] unit_price = {Gasoline_price, 1000l};
 
 
+
         //Initialize the dictionary inside Global_values script
         GB_script.create_price_dic(unit_price);
     }

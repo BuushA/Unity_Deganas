@@ -10,13 +10,11 @@ using TMPro;
 public class Panel_functions : MonoBehaviour
 {
 
-
-   
-
     //dependencies for script
     [SerializeField] string item_name;
+    [SerializeField] LabelMan Money_manager;
     [SerializeField] Global_values GB_script;
-    public button_money Money_manager;
+    
 
     //labels - UI
     [SerializeField] private TMP_Text Tunit_price; //price displayed under selling item
@@ -27,40 +25,44 @@ public class Panel_functions : MonoBehaviour
 
 
     //variables both public and private;
-  
     [HideInInspector]
     public long buy_price;
 
     //set price
     private long item_price;
-    private long current_money;
     private long amount;
+
+    //set the tag
+    //tags will be used to update all labels
+    void Awake()
+    {   
+        this.tag = "Product_Panel";
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        //Change label prices
-        //try uses system
-        try{ 
-            item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
-            Tunit_price.text = (item_price).ToString() + "$";
-            Tunit_amount.text = (amount + 0).ToString() + " of" + '\n' + item_name;
-            max_possible(false); //init max possible amount to buy
-
-        }
-        catch(NullReferenceException e)
-        {
-            Debug.Log("Tunit_price was not set");
-        }
-        
+        update_labels();
+        Money_manager = LabelMan.reference;
     }
 
+    public void update_labels()
+    {   
+        //price of the item might decrease or increase
+        item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
+        Money_manager.to_label(Tunit_price, Money_manager.Format_money(item_price));
+        //amount of items switches between scenes
+        string text;
+        if(GB_script.Dic_item_amount.Count > 0)
+            text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
+        else
+            text = "0" + " of" + '\n' + item_name;
+        Money_manager.to_label(Tunit_amount, text);
+    }
 
     //display and calculate the price
     public void New_amount(string M)
     {
-        
-
         //get the value from input
         //M is always a number;
         M = InBuy_amount.text;
@@ -73,8 +75,7 @@ public class Panel_functions : MonoBehaviour
         //Implement more variaty and Price reset
         catch (FormatException e)
         {
-            Debug.Log($"Unable to parse '{M}'");
-            
+            Debug.Log($"Unable to parse '{M}'"); 
         }
         catch (OverflowException e)
         {
@@ -84,8 +85,10 @@ public class Panel_functions : MonoBehaviour
         //stop overflow and negative values
         if(amount < 100000 &&amount > 0)
         {
-        buy_price = amount * item_price;
-        Tbuy_price.text = (buy_price).ToString() + "$";
+        buy_price = amount * item_price; 
+
+        //TMP_Text, string, enum -> updates the label
+        Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
         }
 
     }
@@ -106,9 +109,8 @@ public class Panel_functions : MonoBehaviour
 
     public void Buy_item()
     {
-        current_money = Global_values.money;
         
-        if(current_money < buy_price)
+        if(Global_values.money < buy_price)
         {
             Debug.Log("Not enough cash");
 
@@ -116,18 +118,17 @@ public class Panel_functions : MonoBehaviour
             {
                 active_message = true;
                 StartCoroutine(label_message(1.5f, "Not enough cash"));
-                
             }
-                
         }
         else
         {
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
             try {
-                Money_manager.update_money_label();
-                Tunit_amount.text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
-                max_possible(true);
+                Money_manager.update_money_label(1);
+                //Update only the amount
+                string text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
+                Money_manager.to_label(Tunit_amount, text);
             }
             catch (NullReferenceException e)
             {
@@ -136,16 +137,10 @@ public class Panel_functions : MonoBehaviour
         }
     }
 
-    public void max_possible(bool part2)
+    public void max_possible()
     {
         amount = Global_values.money /  GB_script.Dic_item_price[item_name];
-        Tmax_amount.text = amount.ToString() + " - maximum";
         buy_price = amount * item_price;
-
-
-        //execute only when requisted, For example, after pressing the max_button
-        if(part2 == true)
-
-            Tbuy_price.text = (buy_price).ToString() + "$";
-        }
+        Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
+    }
 }
