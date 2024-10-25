@@ -70,17 +70,6 @@ public class Global_values : MonoBehaviour
             MonoBehaviour.print("Adding key");
             Dic_item_amount.Add(item_name, amount);
         }
-        /*
-        if(Dic_item_amount.ContainsKey(item_name) == false)
-        {
-            Dic_item_amount.Add(item_name, amount);
-            MonoBehaviour.print("WTF");
-        }
-        else //if key already exists
-        {
-            Dic_item_amount[item_name] += amount;
-        }
-        */
     }
 
 }

@@ -46,12 +46,12 @@ public class Sell_options : MonoBehaviour
         Money_manager = LabelMan.reference;
     }
 
-    public void New_Customer(string name_ref)
+    public void New_Customer(string name_ref, long amount_req)
     {
         //init labels;
         item_name = name_ref;
-        long product_price = GB_script.Dic_item_price[Customers.item_name];
-        sell_amount = Customers.amount_req;
+        long product_price = GB_script.Dic_item_price[item_name];
+        sell_amount = amount_req;
         price = sell_amount * product_price;
 
         //pass the value to button_money to update the money;
@@ -69,13 +69,13 @@ public class Sell_options : MonoBehaviour
         Global_values.money += price; //+money
         GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
        
-
+        /*
         if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count > 1)
             GB_script.Dic_item_amount.Remove(item_name);
         else if(GB_script.Dic_item_amount[item_name] <= 0)
             GB_script.Dic_item_amount.Clear();
+        */
         
-
         //update cash
         Money_manager.update_money_label(2);
         //add a coroutine for animation later

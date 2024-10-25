@@ -131,6 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 65533645}
+  - component: {fileID: 65533646}
   m_Layer: 0
   m_Name: Label_Manager
   m_TagString: Untagged
@@ -153,6 +154,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 338490547}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &65533646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65533644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 532527eb14982434c971a9ba6c41cbda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Cash_label_1: {fileID: 1019157196}
+  Cash_label_2: {fileID: 550847697}
+  Time_label_1: {fileID: 873092694}
+  Time_label_2: {fileID: 1001667839}
 --- !u!1 &182343553
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,14 +256,14 @@ MonoBehaviour:
       - m_Target: {fileID: 308303337}
         m_TargetAssemblyTypeName: Panel_functions, Assembly-CSharp
         m_MethodName: max_possible
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &182343556
 MonoBehaviour:
@@ -725,7 +742,7 @@ GameObject:
   - component: {fileID: 308303337}
   m_Layer: 5
   m_Name: Panel&manager
-  m_TagString: Untagged
+  m_TagString: Product_Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -805,7 +822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item_name: Gasolline
-  Money_manager: {fileID: 0}
+  Money_manager: {fileID: 65533646}
   GB_script: {fileID: 1244791800}
   Tunit_price: {fileID: 1129330199}
   Tbuy_price: {fileID: 2021606249}
@@ -1250,7 +1267,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Customers: {fileID: 2142264904}
-  Money_manager: {fileID: 0}
 --- !u!114 &454036804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1995,7 +2011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 895797219}
   m_Layer: 0
-  m_Name: Administration
+  m_Name: Managment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2324,8 +2340,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1.9000015, y: -9.900002}
-  m_SizeDelta: {x: 5.9745026, y: 16.448997}
+  m_AnchoredPosition: {x: 1.9000015, y: -21.149002}
+  m_SizeDelta: {x: 5.9745, y: 38.9469}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1129330199
 MonoBehaviour:
@@ -3088,10 +3104,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GB_script: {fileID: 1244791800}
   Customers: {fileID: 2142264904}
-  button_label: {fileID: 2042857922}
   Work_UI: {fileID: 1148045221}
-  Administration_UI: {fileID: 895797218}
-  Admin_labels: {fileID: 0}
+  Managment_UI: {fileID: 895797218}
+  button_label: {fileID: 2042857922}
 --- !u!1 &1466413199
 GameObject:
   m_ObjectHideFlags: 0
@@ -3755,7 +3770,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 'MAX
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4444,10 +4461,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   request_UI: {fileID: 1466413199}
   Button_options: {fileID: 454036803}
-  Money_manager: {fileID: 0}
   Stop: 0
   amount_req: 0
-  item_name: 
+  time_efficiency: 4
+  Client_number: 0
+  types:
+  - Poor
+  - Alcoholic
+  - Spender
+  gen: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
