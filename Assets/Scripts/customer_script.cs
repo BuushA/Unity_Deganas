@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Security;
+using System.Numerics;
 
 
 public class customer_script : MonoBehaviour
@@ -23,6 +24,9 @@ public class customer_script : MonoBehaviour
     public bool Stop = false;
     public long amount_req;
     [SerializeField] private int time_efficiency = 4; //4 hours
+
+    //For grid and score - competition
+    private Region_grid Grid;
 
     //rng
     System.Random rand = new();
@@ -76,23 +80,28 @@ public class customer_script : MonoBehaviour
         Generate_clients(gen);
 
         //make a copy of an array;
-        person_list = Client_list;
         person_max = Client_number;
         Start_buying();
+        
     }
 
     Customer[] Client_list = new Customer[max_clients];
     public void Generate_clients(int n)
     {
+        int x_cord, y_cord = new();
         if(Client_number + n >= max_clients)
-            MonoBehaviour.print("Too many clients!");
+        {
+             MonoBehaviour.print("Too many clients!");
+             //Array index
+             Client_number += n-1;
+        }
+           
 
         else {
         //!!!!Implement CHANCE later on!!!!
         for(int i = Client_number; i < Client_number + n; i++)
         {   
             //add random coordinates to client
-                int x_cord, y_cord = new();
                 get_coordinates(out x_cord, out y_cord, n);
                 Client_list[i].x = x_cord;
                 Client_list[i].y = y_cord;
@@ -118,9 +127,11 @@ public class customer_script : MonoBehaviour
             //Get the competitive score based on distance
             //The closer it is to max the more modifier % it adds to everything
             }
+            //how many clients
+            //Stop incrementing after max_clients
+            Client_number += n;
         }
-        //how many clients
-        Client_number += n;
+
     }
 
     private void get_coordinates(out int x_cord, out int y_cord, int n)
@@ -131,17 +142,23 @@ public class customer_script : MonoBehaviour
         y_cord = 0;
         while(found == false)
         {
-            int a = rand.Next(0, x_max);
-            int b = rand.Next(0, y_max);
-            for(int j = 0; j < Client_number+n; j++)
+            int a = rand.Next(1, x_max-1);
+            int b = rand.Next(1, y_max-1);
+            bool no_match = true;
+            for(int j = 0; j < Client_number + n; j++)
             {
-                if(a != Client_list[j].x || b != Client_list[j].y)
+                if(a == Client_list[j].x && b == Client_list[j].y)
                 {
-                    x_cord = a;
-                    y_cord = b;
-                    found = true;
+                    no_match = false;
                     break;
                 }                 
+            }
+
+            if(no_match == true)
+            {
+                x_cord = a;
+                y_cord = b;
+                found = true;
             }
         }
     }
@@ -211,19 +228,6 @@ public class customer_script : MonoBehaviour
         }
     }
 
-
-    private void Client_debug()
-    {
-        MonoBehaviour.print("LIST OF CUSTOMERS: \n");
-        int i = 0;
-        foreach(Customer person in Client_list)
-        {
-            MonoBehaviour.print(i);
-            MonoBehaviour.print(") " + Global_values.Items[person.item_id] + " has: ");
-            MonoBehaviour.print(person.buy_amount);
-            i++;
-        }
-    }
     
     int CNo = new();
     public void Start_buying()
@@ -233,6 +237,13 @@ public class customer_script : MonoBehaviour
         Customer person = new();
         //Client_debug();
         //MonoBehaviour.print(Client_number);
+
+        //Recreate an array
+        //Add additional values if needed in the future
+        for(int i = 0; i < Client_number; i++)
+        {
+            person_list[i].buy_amount = Client_list[i].buy_amount;
+        }
         
 
         
@@ -271,9 +282,6 @@ public class customer_script : MonoBehaviour
             //button_option handles the prices and other modifiers (types, score, etc.)
             Button_options.New_Customer(item_name, person.buy_amount);
 
-            //Make it Regenerate item, amount 
-            Client_list[CNo].buy_amount = -1; //TEMPORARY pre-emptively subtract the amount
-
             //remove people who have already visited
             for(int i = CNo; i < person_max - 1; i++)
             {
@@ -286,40 +294,6 @@ public class customer_script : MonoBehaviour
         for(int i = 0; i < person_max; i++)
             MonoBehaviour.print(person_list[i].buy_amount);
         }
-
-        
-
-        //you have nothing left
-        /*
-        int Dcount = GB_script.Dic_item_amount.Count;
-        if(Dcount == 0)
-        {
-            Stop = true;
-        }
-            
-        if(Stop == false)
-        {
-        request_UI.SetActive(true);
-
-        int item_req = new int();
-        if(Dcount > 1)
-            item_req = rand.Next(Dcount);
-        else
-            item_req = 0;
-        
-        item_name = Global_values.Items[item_req];
-        int item_amount = (int)GB_script.Dic_item_amount[item_name]; //should be long
-
-        if(item_amount <= 0)
-            amount_req = 1;
-        else
-            amount_req = rand.Next(1, (item_amount));
-
-        string request = "Buying " + amount_req.ToString() + " " + item_name;
-        request_label.text = request;
-
-        Button_options.New_Customer(item_name);
-        */
 
         else if(Stop == true)
         {
@@ -344,5 +318,44 @@ public class customer_script : MonoBehaviour
 
         if(work_hours - (_worked_hours + time_efficiency) <= 0)
             Stop = true;
+    }
+
+
+    public void Create_customer_grid(Region_grid reference, GameObject TilePrefab, GameObject HousePrefab)
+    {
+        Grid = reference;
+        
+        float grid_x = Grid.transform.position.x;
+        float grid_y = Grid.transform.position.y;
+
+        int[,] Land_Taken = new int[20, 20];
+
+
+        for(int i = 0; i < Client_number; i++)
+        {
+
+            int x = Client_list[i].x;
+            int y = Client_list[i].y;
+            
+            if(x != null && y != null)
+            {
+                GameObject grid = Instantiate(HousePrefab, Grid.transform, true) as GameObject;
+                grid.transform.position = new UnityEngine.Vector2(grid_x + x * 24, grid_y + y * 24);
+                Land_Taken[x, y] = 1;
+            }
+
+        }
+
+        for(int i = 0; i < x_max; i++)
+        {
+            for(int j = 0; j < y_max; j++)
+            {
+                GameObject grid = Instantiate(TilePrefab, Grid.transform, true) as GameObject;
+
+                //avoid duplicates
+                if(Land_Taken[i, j] != 1)
+                    grid.transform.position = new UnityEngine.Vector2(grid_x + i * 24, grid_y + j * 24);
+            }
+        }
     }
 }

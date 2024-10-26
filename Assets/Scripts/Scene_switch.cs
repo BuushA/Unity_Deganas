@@ -21,6 +21,8 @@ public class Main_Scene_manager : MonoBehaviour
     //UI objects
     [SerializeField] GameObject Work_UI;
     [SerializeField] GameObject Managment_UI;
+    [SerializeField] GameObject Managment_Internal_UI;
+    [SerializeField] GameObject Grid_Map_UI;
     [SerializeField] TMP_Text button_label;
 
 
@@ -100,4 +102,24 @@ public class Main_Scene_manager : MonoBehaviour
             Panel.update_labels();
         }
     }
+
+    //Button events
+    //Swaps scene visibility
+    public void Map()
+    {
+        Grid_Map_UI.SetActive(true);
+        Managment_Internal_UI.SetActive(false);
+
+    }
+
+    public void Managment()
+    {
+        Grid_Map_UI.SetActive(false);
+        Managment_Internal_UI.SetActive(true);
+        //deletes spawned children from Grid_Map
+        Region_grid Grid = Grid_Map_UI.GetComponent<Region_grid>();
+        Grid.Clean();
+    }
+
+
 }
