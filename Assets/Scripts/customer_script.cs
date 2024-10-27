@@ -169,6 +169,7 @@ public class customer_script : MonoBehaviour
         //check for repeats
         bool found = false;
 
+        //Algorithm which create 3 random, different types
         while (found == false)
         {
             int type = rand.Next(0, type_n);
@@ -187,38 +188,6 @@ public class customer_script : MonoBehaviour
 
                 else if (T[j] != type)
                 {
-                    /*
-                    bool change = true;
-                    if (j + 1 == max_clients)
-                    {
-                        for (int s = 0; s < max_clients; s++)
-                        {
-                            if (T[s] != type)
-                            {
-                                change = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    else
-                    {
-                        for (int s = j + 1; s < max_clients; s++)
-                        {
-                            if (T[s] != type)
-                            {
-                                change = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (change == true)
-                    {
-                        T[j] = type;
-                        break;
-                    }
-                    */
                     continue;
                 }
             }
@@ -330,17 +299,25 @@ public class customer_script : MonoBehaviour
 
         int[,] Land_Taken = new int[20, 20];
 
+        Hover_display Tooltip;
+
 
         for(int i = 0; i < Client_number; i++)
         {
 
             int x = Client_list[i].x;
             int y = Client_list[i].y;
+            Customer Cl = Client_list[i];
             
             if(x != null && y != null)
             {
+                //spawn a house object
                 GameObject grid = Instantiate(HousePrefab, Grid.transform, true) as GameObject;
                 grid.transform.position = new UnityEngine.Vector2(grid_x + x * 24, grid_y + y * 24);
+                //Activate Tooltip display for each person
+                Tooltip = grid.GetComponent<Hover_display>();
+                Tooltip.Init_data(Cl.item_id, Cl.buy_amount, Cl.type1, Cl.type2, Cl.type3, Cl.score);
+                //track who has land in the grid
                 Land_Taken[x, y] = 1;
             }
 

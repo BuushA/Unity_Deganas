@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3574149201718848200}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: tile_1_prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6438366736979843031}
   - component: {fileID: 3606421705076809525}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: basic_tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
