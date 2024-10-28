@@ -93,11 +93,10 @@ public class customer_script : MonoBehaviour
         {
              MonoBehaviour.print("Too many clients!");
              //Array index
-             Client_number += n-1;
+             Client_number = max_clients;
         }
-           
-
-        else {
+        
+        else if (Client_number <= max_clients) {
         //!!!!Implement CHANCE later on!!!!
         for(int i = Client_number; i < Client_number + n; i++)
         {   
@@ -259,10 +258,8 @@ public class customer_script : MonoBehaviour
                 person_list[i+1] = person_list[i];
             }
             person_max--;
-        MonoBehaviour.print("NEW LIST: ");
-        for(int i = 0; i < person_max; i++)
-            MonoBehaviour.print(person_list[i].buy_amount);
         }
+        
 
         else if(Stop == true)
         {
