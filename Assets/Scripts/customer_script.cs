@@ -327,11 +327,13 @@ public class customer_script : MonoBehaviour
         {
             for(int j = 0; j < y_max; j++)
             {
-                GameObject grid = Instantiate(TilePrefab, Grid.transform, true) as GameObject;
+                
 
                 //avoid duplicates
-                if(Land_Taken[i, j] != 1)
+                if(Land_Taken[i, j] != 1){
+                    GameObject grid = Instantiate(TilePrefab, Grid.transform, true) as GameObject;
                     grid.transform.position = new UnityEngine.Vector2(grid_x + i * 24, grid_y + j * 24);
+            }
             }
         }
     }
