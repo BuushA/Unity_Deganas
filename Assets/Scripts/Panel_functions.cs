@@ -68,7 +68,7 @@ public class Panel_functions : MonoBehaviour
         M = InBuy_amount.text;
 
         try {
-            amount = int.Parse(M);
+            amount = long.Parse(M);
         }
 
         //Checks for errors
@@ -82,14 +82,23 @@ public class Panel_functions : MonoBehaviour
             Debug.Log("This nubmer cannot fith in an Int32");
         }
         
-        //stop overflow and negative values
-        if(amount < 100000 &&amount > 0)
+        //stop negative values
+        if(amount > 0 )
         {
         buy_price = amount * item_price; 
+            if(amount >999999999999999){
+             Debug.Log("Overflow error");
 
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1.5f, "Overflow error"));
+            }
+        }
+        else{
         //TMP_Text, string, enum -> updates the label
         Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
-        }
+        }}
 
     }
 
@@ -120,6 +129,8 @@ public class Panel_functions : MonoBehaviour
                 StartCoroutine(label_message(1.5f, "Not enough cash"));
             }
         }
+       
+
         else
         {
             Global_values.money -= buy_price;

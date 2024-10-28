@@ -69,12 +69,12 @@ public class Sell_options : MonoBehaviour
         Global_values.money += price; //+money
         GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
        
-        /*
-        if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count > 1)
-            GB_script.Dic_item_amount.Remove(item_name);
-        else if(GB_script.Dic_item_amount[item_name] <= 0)
-            GB_script.Dic_item_amount.Clear();
-        */
+        
+        // if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count > 1)
+        //     GB_script.Dic_item_amount.Remove(item_name);
+        // else if(GB_script.Dic_item_amount[item_name] <= 0)
+        //     GB_script.Dic_item_amount.Clear();
+        
         
         //update cash
         Money_manager.update_money_label(2);
