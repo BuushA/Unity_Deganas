@@ -101,6 +101,7 @@ public class Main_Scene_manager : MonoBehaviour
             MonoBehaviour.print(Panel);
             Panel.update_labels();
         }
+        MonoBehaviour.print("THIS CHANGE 03");
     }
 
     //Button events

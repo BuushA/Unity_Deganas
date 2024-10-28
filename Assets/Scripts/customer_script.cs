@@ -263,14 +263,18 @@ public class customer_script : MonoBehaviour
 
         else if(Stop == true)
         {
-            Scene_manager.Revert_scenes();
-            MonoBehaviour.print("Over");
+            Switch_to_managment();
             //add a pop up
             //switch scene
         }
     }
     //Prideti veliau laukima kliento, kad butu realistiskiau
 
+    public void Switch_to_managment()
+    {
+        Scene_manager.Revert_scenes();
+        MonoBehaviour.print("Over");
+    }
 
 
     const int work_hours = 16;
