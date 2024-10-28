@@ -69,6 +69,14 @@ public class Panel_functions : MonoBehaviour
 
         try {
             amount = long.Parse(M);
+            
+            if(amount > 0 )
+            {
+            buy_price = amount * item_price; 
+
+            //TMP_Text, string, enum -> updates the label
+            Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
+            }
         }
 
         //Checks for errors
@@ -81,24 +89,6 @@ public class Panel_functions : MonoBehaviour
         {
             Debug.Log("This nubmer cannot fith in an Int32");
         }
-        
-        //stop negative values
-        if(amount > 0 )
-        {
-        buy_price = amount * item_price; 
-            if(amount >999999999999999){
-             Debug.Log("Overflow error");
-
-            if(active_message == false)
-            {
-                active_message = true;
-                StartCoroutine(label_message(1.5f, "Overflow error"));
-            }
-        }
-        else{
-        //TMP_Text, string, enum -> updates the label
-        Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
-        }}
 
     }
 
