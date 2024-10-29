@@ -42,19 +42,21 @@ public class Panel_functions : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        update_labels();
         Money_manager = LabelMan.reference;
+        update_labels();
     }
 
     public void update_labels()
     {   
+        string text;
         //price of the item might decrease or increase
         item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
-        Money_manager.to_label(Tunit_price, Money_manager.Format_money(item_price));
+        text = Money_manager.Format_number(item_price) + " $";
+        Money_manager.to_label(Tunit_price, text);
         //amount of items switches between scenes
-        string text;
+        
         if(GB_script.Dic_item_amount.Count > 0)
-            text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
+            text = Money_manager.Format_number(GB_script.Dic_item_amount[item_name] + 0) + " of" + '\n' + item_name;
         else
             text = "0" + " of" + '\n' + item_name;
         Money_manager.to_label(Tunit_amount, text);
@@ -69,13 +71,13 @@ public class Panel_functions : MonoBehaviour
 
         try {
             amount = long.Parse(M);
-            
-            if(amount > 0 )
+
+            if(amount >= 0 )
             {
             buy_price = amount * item_price; 
 
-            //TMP_Text, string, enum -> updates the label
-            Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
+            //TMP_Text, string-> updates the label
+            Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
             }
         }
 
@@ -120,6 +122,16 @@ public class Panel_functions : MonoBehaviour
             }
         }
        
+       else if(amount == 0)
+       {
+            Debug.Log("Won't create an element with value 0");
+
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1.5f, "Can't buy dust"));
+            }
+       }
 
         else
         {
@@ -128,7 +140,7 @@ public class Panel_functions : MonoBehaviour
             try {
                 Money_manager.update_money_label(1);
                 //Update only the amount
-                string text = (GB_script.Dic_item_amount[item_name] + 0).ToString() + " of" + '\n' + item_name;
+                string text = Money_manager.Format_number(GB_script.Dic_item_amount[item_name] + 0) + " of" + '\n' + item_name;
                 Money_manager.to_label(Tunit_amount, text);
             }
             catch (NullReferenceException e)
@@ -142,6 +154,6 @@ public class Panel_functions : MonoBehaviour
     {
         amount = Global_values.money /  GB_script.Dic_item_price[item_name];
         buy_price = amount * item_price;
-        Money_manager.to_label(Tbuy_price, Money_manager.Format_money(buy_price));
+        Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
     }
 }

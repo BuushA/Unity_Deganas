@@ -56,7 +56,7 @@ public class Sell_options : MonoBehaviour
 
         //pass the value to button_money to update the money;
         //temporary labels
-        Neutral.text = Money_manager.Format_money(price);
+        Neutral.text = Money_manager.Format_number(price);
         //increase
 
         //lower

@@ -37,11 +37,11 @@ public class LabelMan : MonoBehaviour
     public void update_money_label(int Part)
     {
         string str_money;
-        str_money = Format_money(Global_values.money);
+        str_money = Format_number(Global_values.money);
         if(Part == 1)
-            Cash_label_1.text = str_money;
+            Cash_label_1.text = str_money + " $";
         else if(Part == 2)
-            Cash_label_2.text = str_money;  
+            Cash_label_2.text = str_money + " $";  
     }
 
     //call to update scenes time label
@@ -62,11 +62,11 @@ public class LabelMan : MonoBehaviour
         Time_label_2.text = day_and_hours; 
     }
 
-    public string Format_money(long Global_money)
+    public string Format_number(long number)
     {
        string[] trump ={"","K","M","B","T","Qa","Qi","Sx","Se","Oc","No","De","Un"};//n nustato kuri trumpini naudos
-       int n=(((Global_money).ToString().Length)-3)/3;
-       int m=(((Global_money).ToString().Length)-3)%3+1;//kiek reikia skaitmenu pries kableli
+       int n=(((number).ToString().Length)-3)/3;
+       int m=(((number).ToString().Length)-3)%3+1;//kiek reikia skaitmenu pries kableli
      
        string p="0";
          if(m<0){
@@ -75,12 +75,12 @@ public class LabelMan : MonoBehaviour
          }
          
           if (m>0){
-                   p=(Global_money).ToString().Substring(0,m);}
+                   p=(number).ToString().Substring(0,m);}
         int k=2;
-        if((Global_money).ToString().Length<2){
-            k=(Global_money).ToString().Length;
+        if((number).ToString().Length<2){
+            k=(number).ToString().Length;
         }
        
-      return ("Cash: " + p+","+(Global_money).ToString().Substring(m,k)+" " +trump[n] +"$");
+      return (p+","+(number).ToString().Substring(m,k)+" " +trump[n]);
     }
 }
