@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Region_grid : MonoBehaviour
 {
@@ -8,8 +9,14 @@ public class Region_grid : MonoBehaviour
     [SerializeField] GameObject Tile;
     [SerializeField] GameObject House;
 
+    [SerializeField] GameObject customerCard;
+    private TMP_Text LabCustomer;
 
-
+    void Start()
+    {
+        LabCustomer = customerCard.GetComponent<TMP_Text>();
+        customerCard.SetActive(false);
+    }
 
     public void Generate_map()
     {
@@ -26,4 +33,17 @@ public class Region_grid : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         }
     }
+
+
+    public void Show_tooltip(string information)
+    {
+        LabCustomer.text = information;
+        customerCard.SetActive(true);
+    }
+
+    public void Hide_tooltip()
+    {
+        customerCard.SetActive(false);
+    }
+
 }

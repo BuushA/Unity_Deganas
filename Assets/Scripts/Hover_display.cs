@@ -11,9 +11,9 @@ public class Hover_display : MonoBehaviour
     [SerializeField] float offset;
 
     //dependencies
-    [SerializeField] GameObject Tooltip;
-    TMP_Text tip;
     Global_values GB_script;
+    Region_grid Grid;
+    LabelMan MoneyManager;
 
     //data for the tooltip
     int item_id;
@@ -22,46 +22,47 @@ public class Hover_display : MonoBehaviour
     int score;
     int type1, type2, type3;
 
+    string information = "";
 
 
 
     //init data from customer_script
-    public void Init_data(int id, long amount, int S, int t1, int t2, int t3)
+    public void Init_data(int id, long amount, int S, int t1, int t2, int t3, Region_grid GReference)
     {
         //script dependencies
-        tip = Tooltip.GetComponent<TMP_Text>();
-        Tooltip.SetActive(false);
         GB_script = Global_values.reference;
+        Grid = GReference;
+        MoneyManager = LabelMan.reference;
 
         item_id = id;
         item_name = Global_values.Items[item_id];
         buy_amount = amount;
         score = S;
         type1 = t1; type2 = t2; type3 = t3;
-        to_Tooltip();
+        information = to_Tooltip();
     }
 
-    void to_Tooltip()
+    //create a text reference
+    private string to_Tooltip()
     {
-        string information = "";
-        information += "Score: " + score.ToString() + '\n';
-        information += "Types: " + "[ " + type1.ToString() + ", " + type2.ToString()
+        string I = "";
+        I += "Score: " + score.ToString() + '\n';
+        I += "Types: " + "[ " + type1.ToString() + ", " + type2.ToString()
         + ", " + type3.ToString() + " ]" + '\n';
-        information += "Wants to buy: " + buy_amount.ToString() + '\n';
-        information += "Of " + item_name;
+        I += "Wants to buy: " + MoneyManager.Format_number(buy_amount) + '\n';
+        I += "Of " + item_name;
 
-        tip.text = information;
+        return I;
     }
 
+    //Communication with Grid object
     private void OnMouseEnter()
     {
-        Tooltip.SetActive(true);
+        Grid.Show_tooltip(information);
     }
 
     private void OnMouseExit()
     {
-        Tooltip.SetActive(false);
+        Grid.Hide_tooltip();
     }
-
-
 }

@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Globalization;
 using System.Security;
 using System.Numerics;
+using System.Collections.Generic;
 
 
 public class customer_script : MonoBehaviour
@@ -24,6 +25,7 @@ public class customer_script : MonoBehaviour
     public bool Stop = false;
     public long amount_req;
     [SerializeField] private int time_efficiency = 4; //4 hours
+    private Chance_rng Chan;
 
     //For grid and score - competition
     private Region_grid Grid;
@@ -51,10 +53,20 @@ public class customer_script : MonoBehaviour
     public string[] types = {"Poor", "Alcoholic", "Spender"};
     private string item_name;
     [SerializeField] int gen = 5;
+
+    //Weighted values;
+    Dictionary<string, int> T = new Dictionary<string, int>();
+    Dictionary<string, int> Buy = new Dictionary<string, int>
+    {
+        {"20%", 10},
+        {"40%", 6},
+        {"60%", 4},
+        {"80%", 2},
+        {"100%", 1}
+    };
      
 
     //Creates a list of customers with all the properties and product info;
-
     //Temporary values for now
 
 
@@ -68,6 +80,7 @@ public class customer_script : MonoBehaviour
         Scene_manager = Main_Scene_manager.reference;
         Money_manager = LabelMan.reference;
         Button_options.InitGlobal();
+        Chan = Chance_rng.reference;
 
         //start buying start after pressing the scene button
     }
@@ -101,12 +114,13 @@ public class customer_script : MonoBehaviour
         for(int i = Client_number; i < Client_number + n; i++)
         {   
             //add random coordinates to client
-                get_coordinates(out x_cord, out y_cord, n);
+                get_coordinates(out x_cord, out y_cord, n); //potentially add a chance
                 Client_list[i].x = x_cord;
                 Client_list[i].y = y_cord;
 
             //add random types to Client
             int[] T = new int[3];
+            //add chance for clients
             get_Types(T);
             Client_list[i].type1 = T[0];
             Client_list[i].type2 = T[1];
@@ -119,8 +133,21 @@ public class customer_script : MonoBehaviour
             Client_list[i].item_id = It_id;
             
             //amount of products they will buy
+
             item_name = Global_values.Items[It_id];
             int max_amount = (int)GB_script.Dic_item_amount[item_name];
+
+            //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
+            int total = 0;
+            string S;
+            foreach(KeyValuePair<string, int> kvp in Buy) {total += kvp.Value;}
+            Chan.strPlace_weights(total, Buy, out S); //return a string of %
+            //remove %
+            if(S.Length == 3)
+                S = S.Remove(2); 
+            else S = S.Remove(3);
+            //new max_amount
+            max_amount = max_amount / 100 * Int32.Parse(S);
             Client_list[i].buy_amount = rand.Next(1, max_amount);
 
             //Get the competitive score based on distance
@@ -317,7 +344,7 @@ public class customer_script : MonoBehaviour
                 grid.transform.position = new UnityEngine.Vector2(grid_x + x * 24, grid_y + y * 24);
                 //Activate Tooltip display for each person
                 Tooltip = grid.GetComponent<Hover_display>();
-                Tooltip.Init_data(Cl.item_id, Cl.buy_amount, Cl.type1, Cl.type2, Cl.type3, Cl.score);
+                Tooltip.Init_data(Cl.item_id, Cl.buy_amount, Cl.type1, Cl.type2, Cl.type3, Cl.score, Grid);
                 //track who has land in the grid
                 Land_Taken[x, y] = 1;
             }
