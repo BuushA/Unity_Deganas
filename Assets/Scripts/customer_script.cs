@@ -50,7 +50,7 @@ public class customer_script : MonoBehaviour
     const int x_max = 20;
     const int y_max = 20;
     const int max_score = 100;
-    public string[] types = {"Poor", "Alcoholic", "Spender"};
+    public string[] types = {"Young", "Alcoholic", "Spender", "Cheap", "Old", "Poor"}; //Set Values inside the inspector
     private string item_name;
     [SerializeField] int gen = 5;
 
@@ -120,7 +120,6 @@ public class customer_script : MonoBehaviour
 
             //add random types to Client
             int[] T = new int[3];
-            //add chance for clients
             get_Types(T);
             Client_list[i].type1 = T[0];
             Client_list[i].type2 = T[1];
@@ -191,36 +190,52 @@ public class customer_script : MonoBehaviour
 
     private void get_Types(int[] T)
     {
-        int type_n = types.Length;
-        //check for repeats
-        bool found = false;
-
-        //Algorithm which create 3 random, different types
-        while (found == false)
+        int n = types.Length;
+        string[] tp = new string[3];
+        string[] tmp = new string[n];
+        //copy an array
+        for(int x = 0; x < n; x++)
         {
-            int type = rand.Next(0, type_n);
-            //assume numbers [0, 1, 1, 2]
-            //each while loop will do: 1) add 0; 2) j + 1; add 1 (0, 1) and reset 3) j + 1; break; 4) j + 1; j + 1; add 2 (0, 1, 2)
-            for (int j = 0; j < type_n; j++)
-            {
-                if (T[j] == type)
-                    break;
-
-                else if (T[j] == null)
-                {
-                    T[j] = type;
-                    break;
-                }
-
-                else if (T[j] != type)
-                {
-                    continue;
-                }
-            }
-
-            if (T.Length == 3)
-                found = true;
+            tmp[x] = types[x];
+            MonoBehaviour.print(types[x]);
         }
+            
+        
+        MonoBehaviour.print("3 types: ");
+        for(int i = 0; i < 3; i++)
+        {
+            int value = 0;
+
+            if(n > 1)
+                value = rand.Next(0, n-1);
+            
+            tp[i] = tmp[value];
+
+            //remove used types
+            for(int j = value; j < n-1; j++)
+            {
+                tmp[j] = tmp[j+1];
+                tmp[j+1] = tmp[j];
+            }
+            n--;
+        }
+
+        //find position of them;
+        for(int i = 0; i < 3; i++)
+        {
+            int id = 0;
+            foreach(string x in types)
+            {
+                if(tp[i] == x)
+                {
+                    T[i] = id;
+                    MonoBehaviour.print($"{tp[i]} == " + $"{x}: "  + $"{id}");
+                    break;
+                }
+                 id++;
+            }
+        }
+
     }
 
     
@@ -267,7 +282,7 @@ public class customer_script : MonoBehaviour
 
         if(Stop == false)
         {
-            string request = "Buying " + person.buy_amount.ToString() + " " + item_name;
+            string request = "Buying " + Money_manager.Format_number(person.buy_amount) + " " + item_name;
             Money_manager.to_label(request_label, request);
 
             
@@ -344,7 +359,7 @@ public class customer_script : MonoBehaviour
                 grid.transform.position = new UnityEngine.Vector2(grid_x + x * 24, grid_y + y * 24);
                 //Activate Tooltip display for each person
                 Tooltip = grid.GetComponent<Hover_display>();
-                Tooltip.Init_data(Cl.item_id, Cl.buy_amount, Cl.type1, Cl.type2, Cl.type3, Cl.score, Grid);
+                Tooltip.Init_data(Cl.item_id, Cl.buy_amount, Cl.score, Cl.type1, Cl.type2, Cl.type3, Grid);
                 //track who has land in the grid
                 Land_Taken[x, y] = 1;
             }
