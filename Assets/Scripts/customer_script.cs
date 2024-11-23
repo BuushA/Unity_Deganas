@@ -129,7 +129,9 @@ public class customer_script : MonoBehaviour
                         get_coordinates(out x_cord, out y_cord, max_clients - Client_number); //potentially add a chance
                         Client_list[i].x = x_cord;
                         Client_list[i].y = y_cord;
-
+                    //Get the competitive score based on distance
+                    //needs coordinates beforehand
+                    Client_list[i].score = Get_Score(i);
                     //add random types to Client
                     int Tlen = type_1.Length; Client_list[i].type1 = rand.Next(0, Tlen);
                     
@@ -155,11 +157,18 @@ public class customer_script : MonoBehaviour
         if (Client_number < max_clients) {
         //!!!!Implement CHANCE later on!!!!
         for(int i = Client_number; i < Client_number + n; i++)
-        {   
+        {
+            
+            //multiplies money; adds chance to sell options; lowers time taken in the store
+
             //add random coordinates to client
                 get_coordinates(out x_cord, out y_cord, n); //potentially add a chance
                 Client_list[i].x = x_cord;
                 Client_list[i].y = y_cord;
+
+            //Get the competitive score based on distance
+            //needs coordinates beforehand
+            Client_list[i].score = Get_Score(i);
 
             //add random types to Client
             int Tlen = type_1.Length; Client_list[i].type1 = rand.Next(0, Tlen);
@@ -175,9 +184,6 @@ public class customer_script : MonoBehaviour
             Client_list[i].item_id = ItemID;
             Client_list[i].buy_amount = BuyAmount;
 
-            //Get the competitive score based on distance
-            Client_list[i].score = Get_Score(i);
-            //The closer it is to max the more modifier % it adds to everything
             }
             //how many clients
             //Stop incrementing after max_clients
@@ -309,7 +315,7 @@ public class customer_script : MonoBehaviour
             
 
             //button_option handles the prices and other modifiers (types, score, etc.)
-            Button_options.New_Customer(item_name, person.buy_amount);
+            Button_options.New_Customer(item_name, person.buy_amount, Client_list[CNo].score);
 
             //remove people who have already visited
             for(int i = CNo; i < person_max - 1; i++)
@@ -344,14 +350,17 @@ public class customer_script : MonoBehaviour
 
     const int work_hours = 16;
     int _worked_hours = 0;
-    public void Time_spent()
+    public void Time_spent(int score)
     {
         //check if the time doesn't go over the limit
-        _worked_hours += time_efficiency;
-        Global_values.time += time_efficiency;
+        //Unfair mechanic, change accuracy later
+        int time_taken = (int)(time_efficiency - (1 - score / 100));
+        MonoBehaviour.print(time_taken);
+        _worked_hours += time_taken;
+        Global_values.time += time_taken;
         Money_manager.update_time_label(2);
 
-        if(work_hours - (_worked_hours + time_efficiency) <= 0)
+        if(work_hours - (_worked_hours + time_taken) <= 0)
             Stop = true;
     }
 
@@ -400,7 +409,7 @@ public class customer_script : MonoBehaviour
         //MonoBehaviour.print("smallest dist: " + $"{smallest}");
         //calculate the score based on the distance;
         //distance totals to 50% of score
-        int score = smallest;
+        int score = 50 - smallest;
 
         return score;
     }

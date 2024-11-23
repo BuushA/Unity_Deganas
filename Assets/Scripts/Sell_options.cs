@@ -26,6 +26,8 @@ public class Sell_options : MonoBehaviour
     private long price;
     private long sell_amount;
     private string item_name;
+    private int score;
+
 
 
     void Awake()
@@ -46,13 +48,14 @@ public class Sell_options : MonoBehaviour
         Money_manager = LabelMan.reference;
     }
 
-    public void New_Customer(string name_ref, long amount_req)
+    public void New_Customer(string name_ref, long amount_req, int SC)
     {
         //init labels;
         item_name = name_ref;
         long product_price = GB_script.Dic_item_price[item_name];
+        score = SC;
         sell_amount = amount_req;
-        price = sell_amount * product_price;
+        price = (long)(sell_amount * product_price * (1 + score/10));
 
         //pass the value to button_money to update the money;
         //temporary labels
@@ -93,7 +96,7 @@ public class Sell_options : MonoBehaviour
             // for now instantly switches customers
             //first check if the is anything to sell
             Customers.Start_buying();
-            Customers.Time_spent();
+            Customers.Time_spent(score);
         }
 
     }
