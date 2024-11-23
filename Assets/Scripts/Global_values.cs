@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 public class Global_values : MonoBehaviour
 {
     public static long money;
     public static int time;
+    [SerializeField] public static long Station_price = 10000;
     //pass the reference maby use a pointer (?)
     public static Global_values reference;
 
@@ -25,6 +27,8 @@ public class Global_values : MonoBehaviour
     public Dictionary<string, long> Dic_item_amount = new Dictionary<string, long>();
     //dictionary of total demand for the product
     public Dictionary<string, float> Dic_item_demand = new Dictionary<string, float>();
+
+    
 
 
     // Awake is called before the application starts

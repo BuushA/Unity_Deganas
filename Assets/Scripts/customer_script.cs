@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Security;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Reflection.Emit;
+using System.Reflection;
 
 
 public class customer_script : MonoBehaviour
@@ -41,16 +43,26 @@ public class customer_script : MonoBehaviour
         public int item_id; //upgrade later to be multible items
         public long buy_amount; 
         public int score;
+        public int visits;
     };
 
     [HideInInspector]
     public int Client_number = 0;
     //limits for generating Clients
     const int max_clients = 100;
-    const int x_max = 20;
-    const int y_max = 20;
+    const int x_max = 15;
+    const int y_max = 15;
     const int max_score = 100;
-    public string[] types = {"Young", "Alcoholic", "Spender", "Cheap", "Old", "Poor"}; //Set Values inside the inspector
+    //public string[] types = {"Young", "Alcoholic", "Spender", "Cheap", "Old", "Poor"}; //Set Values inside the inspector
+
+    //physical condition or age
+    public string[] type_1 = {"Young", "Old", "Kid"};
+    //social position or occupation/job 
+    public string[] type_2 = {"Trucker", "Poor", "Millionaire"};
+    //Habit, characteristic
+    public string[] type_3 = {"Alcoholic", "Cheap", "Spender"};
+
+
     private string item_name;
     [SerializeField] int gen = 5;
 
@@ -87,9 +99,11 @@ public class customer_script : MonoBehaviour
     
     Customer[] person_list = new Customer[max_clients];
     int person_max = max_clients;
-    public void Scene_init()
+    bool maxed;
+   public void Scene_init()
     {
         Stop = false;
+        maxed = false;
         Generate_clients(gen);
 
         //make a copy of an array;
@@ -102,14 +116,43 @@ public class customer_script : MonoBehaviour
     public void Generate_clients(int n)
     {
         int x_cord, y_cord = new();
+
         if(Client_number + n >= max_clients)
         {
              MonoBehaviour.print("Too many clients!");
              //Array index
-             Client_number = max_clients;
+            if(maxed == false)
+            {
+                for(int i = Client_number; i < max_clients; i++)
+                {   
+                    //add random coordinates to client
+                        get_coordinates(out x_cord, out y_cord, max_clients - Client_number); //potentially add a chance
+                        Client_list[i].x = x_cord;
+                        Client_list[i].y = y_cord;
+
+                    //add random types to Client
+                    int Tlen = type_1.Length; Client_list[i].type1 = rand.Next(0, Tlen);
+                    
+                    Tlen = type_2.Length; Client_list[i].type2 = rand.Next(0, Tlen);
+                    
+                    Tlen = type_3.Length; Client_list[i].type3 = rand.Next(0, Tlen);
+
+                    //Make it compatible with multible items in the future
+                    int ItemID = 0; long BuyAmount = 0;
+                    //add random item and buy amount
+                    Products(out ItemID, out BuyAmount);
+                    Client_list[i].item_id = ItemID;
+                    Client_list[i].buy_amount = BuyAmount;
+
+                    //Get the competitive score based on distance
+                    //The closer it is to max the more modifier % it adds to everything
+                    }
+                    maxed = true;
+                    Client_number = max_clients;
+            }
         }
         
-        else if (Client_number <= max_clients) {
+        if (Client_number < max_clients) {
         //!!!!Implement CHANCE later on!!!!
         for(int i = Client_number; i < Client_number + n; i++)
         {   
@@ -119,37 +162,21 @@ public class customer_script : MonoBehaviour
                 Client_list[i].y = y_cord;
 
             //add random types to Client
-            int[] T = new int[3];
-            get_Types(T);
-            Client_list[i].type1 = T[0];
-            Client_list[i].type2 = T[1];
-            Client_list[i].type3 = T[2];
+            int Tlen = type_1.Length; Client_list[i].type1 = rand.Next(0, Tlen);
+            
+            Tlen = type_2.Length; Client_list[i].type2 = rand.Next(0, Tlen);
+            
+            Tlen = type_3.Length; Client_list[i].type3 = rand.Next(0, Tlen);
 
             //Make it compatible with multible items in the future
-            //add what product they will buy
-            int Dcount = GB_script.Dic_item_amount.Count;
-            int It_id = rand.Next(0, Dcount);
-            Client_list[i].item_id = It_id;
-            
-            //amount of products they will buy
-
-            item_name = Global_values.Items[It_id];
-            int max_amount = (int)GB_script.Dic_item_amount[item_name];
-
-            //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
-            int total = 0;
-            string S;
-            foreach(KeyValuePair<string, int> kvp in Buy) {total += kvp.Value;}
-            Chan.strPlace_weights(total, Buy, out S); //return a string of %
-            //remove %
-            if(S.Length == 3)
-                S = S.Remove(2); 
-            else S = S.Remove(3);
-            //new max_amount
-            max_amount = max_amount / 100 * Int32.Parse(S);
-            Client_list[i].buy_amount = rand.Next(1, max_amount);
+            int ItemID = 0; long BuyAmount = 0;
+            //add random item and buy amount
+            Products(out ItemID, out BuyAmount);
+            Client_list[i].item_id = ItemID;
+            Client_list[i].buy_amount = BuyAmount;
 
             //Get the competitive score based on distance
+            Client_list[i].score = Get_Score(i);
             //The closer it is to max the more modifier % it adds to everything
             }
             //how many clients
@@ -157,6 +184,34 @@ public class customer_script : MonoBehaviour
             Client_number += n;
         }
 
+    }
+
+    private void Products(out int It_id, out long amount)
+    {
+            //add what product they will buy
+            int Dcount = GB_script.Dic_item_amount.Count;
+            It_id = rand.Next(0, Dcount);
+
+            
+            //amount of products they will buy
+            item_name = Global_values.Items[It_id];
+            int max_amount = (int)GB_script.Dic_item_amount[item_name];
+
+            //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
+            int total = 0;
+            string S;
+            foreach(KeyValuePair<string, int> kvp in Buy) 
+            {
+                total += kvp.Value;
+            }
+            Chan.strPlace_weights(total, Buy, out S); //return a string of %
+            //remove %
+            if(S.Length == 3)
+                S = S.Remove(2); 
+            else S = S.Remove(3);
+            //new max_amount
+            max_amount = max_amount / 100 * Int32.Parse(S);
+            amount = rand.Next(1, max_amount);
     }
 
     private void get_coordinates(out int x_cord, out int y_cord, int n)
@@ -188,54 +243,12 @@ public class customer_script : MonoBehaviour
         }
     }
 
-    private void get_Types(int[] T)
+    //function might be restored later
+    //if weights are needed
+    //or other values assosiated with types
+    private void get_Types()
     {
-        int n = types.Length;
-        string[] tp = new string[3];
-        string[] tmp = new string[n];
-        //copy an array
-        for(int x = 0; x < n; x++)
-        {
-            tmp[x] = types[x];
-            MonoBehaviour.print(types[x]);
-        }
-            
-        
-        MonoBehaviour.print("3 types: ");
-        for(int i = 0; i < 3; i++)
-        {
-            int value = 0;
-
-            if(n > 1)
-                value = rand.Next(0, n-1);
-            
-            tp[i] = tmp[value];
-
-            //remove used types
-            for(int j = value; j < n-1; j++)
-            {
-                tmp[j] = tmp[j+1];
-                tmp[j+1] = tmp[j];
-            }
-            n--;
-        }
-
-        //find position of them;
-        for(int i = 0; i < 3; i++)
-        {
-            int id = 0;
-            foreach(string x in types)
-            {
-                if(tp[i] == x)
-                {
-                    T[i] = id;
-                    MonoBehaviour.print($"{tp[i]} == " + $"{x}: "  + $"{id}");
-                    break;
-                }
-                 id++;
-            }
-        }
-
+        return;
     }
 
     
@@ -259,8 +272,14 @@ public class customer_script : MonoBehaviour
         
         while(searching == true)
         {
+            if(person_max == 0)
+            {
+                Stop = true;
+                break;
+            }
+
             bool new_person = true;
-            CNo = rand.Next(0, person_max-1);
+            CNo = rand.Next(0, person_max);
             person = person_list[CNo];
             
             //check if the person already visited
@@ -300,6 +319,10 @@ public class customer_script : MonoBehaviour
                 person_list[i+1] = person_list[i];
             }
             person_max--;
+
+            //regenerate the customer values based on the amount of visits it has
+            ValueRegen(CNo);
+            Client_list[CNo].visits += 1;
         }
         
 
@@ -333,16 +356,68 @@ public class customer_script : MonoBehaviour
     }
 
 
-    public void Create_customer_grid(Region_grid reference, GameObject TilePrefab, GameObject HousePrefab)
+    private void ValueRegen(int id)
+    {
+        int visited = Client_list[id].visits;
+        //MonoBehaviour.print("Visited - " + $"{Client_list[id].visits}");
+        
+        //refresh item and buy amount
+        int ItemId = 0; long BuyAmount = 0;
+        if(visited % 2 == 0)
+        {
+            Products(out ItemId, out BuyAmount);
+            Client_list[id].item_id = ItemId;
+            Client_list[id].buy_amount = BuyAmount;
+        }
+    }
+
+    public int Get_Score(int ClientID)
+    {
+        if(Grid == null)
+            return ClientID;
+
+        // get the distance to the nearest station
+        MonoBehaviour.print("SCore of client - " + $"{ClientID}");
+        int smallest = 999;
+        int Cl_x = Client_list[ClientID].x;
+        int Cl_y = Client_list[ClientID].y;
+        int distance = 0;
+        for(int i = 0; i < Grid.N_stations; i++)
+        {
+            int S_x = Grid.Stations_x[i];
+            int S_y = Grid.Stations_y[i];
+
+            //MonoBehaviour.print("Measuring distance from: " + $"{Cl_x}, " + $"{Cl_y}"  + " to " + $"{S_x}, " + $"{S_y}");
+
+            distance = Math.Abs(S_x - Cl_x) + Math.Abs(S_y - Cl_y);
+
+            //MonoBehaviour.print("Distance is: " + $"{distance}");
+
+            if(distance < smallest)
+                smallest = distance;
+
+        }
+        //MonoBehaviour.print("smallest dist: " + $"{smallest}");
+        //calculate the score based on the distance;
+        //distance totals to 50% of score
+        int score = smallest;
+
+        return score;
+    }
+
+
+    public void Create_customer_grid(Region_grid reference, GameObject TilePrefab, GameObject HousePrefab, GameObject StationPrefab ,int[,] Owned_land)
     {
         Grid = reference;
         
         float grid_x = Grid.transform.position.x;
         float grid_y = Grid.transform.position.y;
 
-        int[,] Land_Taken = new int[20, 20];
+        int[,] Land_Taken = new int[15, 15];
 
         Hover_display Tooltip;
+
+
 
 
         for(int i = 0; i < Client_number; i++)
@@ -352,7 +427,7 @@ public class customer_script : MonoBehaviour
             int y = Client_list[i].y;
             Customer Cl = Client_list[i];
             
-            if(x != null && y != null)
+            if(x != null && y != null && Owned_land[x, y] != 1)
             {
                 //spawn a house object
                 GameObject grid = Instantiate(HousePrefab, Grid.transform, true) as GameObject;
@@ -363,7 +438,6 @@ public class customer_script : MonoBehaviour
                 //track who has land in the grid
                 Land_Taken[x, y] = 1;
             }
-
         }
 
         for(int i = 0; i < x_max; i++)
@@ -371,13 +445,20 @@ public class customer_script : MonoBehaviour
             for(int j = 0; j < y_max; j++)
             {
                 
-
                 //avoid duplicates
-                if(Land_Taken[i, j] != 1){
+                if(Land_Taken[i, j] != 1 && Owned_land[i, j] != 1){
                     GameObject grid = Instantiate(TilePrefab, Grid.transform, true) as GameObject;
                     grid.transform.position = new UnityEngine.Vector2(grid_x + i * 24, grid_y + j * 24);
+                    grid.GetComponent<Land_buy>().getData(Grid);
+            }
+            else if( Owned_land[i, j] == 1)
+            {
+                GameObject grid = Instantiate(StationPrefab, Grid.transform, true) as GameObject;
+                grid.transform.position = new UnityEngine.Vector2(grid_x + i * 24, grid_y + j * 24);
             }
             }
         }
+
+
     }
 }

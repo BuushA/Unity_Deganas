@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using TMPro;
 using System.Runtime.InteropServices;
 using System.Reflection.Emit;
+using System.Globalization;
 
 public class Main_Scene_manager : MonoBehaviour
 {
@@ -24,7 +25,11 @@ public class Main_Scene_manager : MonoBehaviour
     [SerializeField] GameObject Managment_Internal_UI;
     [SerializeField] GameObject Grid_Map_UI;
     [SerializeField] TMP_Text button_label;
+    [SerializeField] GameObject Operations;
 
+
+
+    bool hasStation = false;
 
     void Awake()
     {
@@ -40,6 +45,8 @@ public class Main_Scene_manager : MonoBehaviour
         Label_Manager = LabelMan.reference;
         Label_Manager.update_money_label(1);
         Label_Manager.update_time_label(1);
+        MonoBehaviour.print("ha");
+        Operations.SetActive(false);
     }
 
 
@@ -118,6 +125,18 @@ public class Main_Scene_manager : MonoBehaviour
         Managment_Internal_UI.SetActive(true);
         //deletes spawned children from Grid_Map
         Region_grid Grid = Grid_Map_UI.GetComponent<Region_grid>();
+
+        //activate gameplay when you buy your first gas station
+        if(hasStation == false)
+        {
+            MonoBehaviour.print(Grid.N_stations);
+            if(Grid.N_stations > 0)
+            {
+                MonoBehaviour.print("Activated");
+                hasStation = true;
+                Operations.SetActive(true);
+            }
+        }
         Grid.Clean();
     }
 
