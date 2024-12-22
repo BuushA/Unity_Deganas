@@ -4,11 +4,8 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using System.Runtime.Serialization;
 using TMPro;
-using System.Runtime.InteropServices;
-using System.Reflection.Emit;
-using System.Globalization;
+
 
 public class Main_Scene_manager : MonoBehaviour
 {
@@ -90,7 +87,8 @@ public class Main_Scene_manager : MonoBehaviour
         }
     }
 
-    public void Revert_scenes()
+    //
+    public void Revert_scenes() 
     {   
         //change the UI
         Managment_UI.SetActive(true);
@@ -99,15 +97,12 @@ public class Main_Scene_manager : MonoBehaviour
         Label_Manager.update_money_label(1);
         Label_Manager.update_time_label(1);
         //Panel labels
-        Panel_functions Panel;
-        GameObject[] panels;
-        panels = GameObject.FindGameObjectsWithTag("Product_Panel");
-        foreach (GameObject pan in panels)
-        {   
-            Panel = pan.GetComponent<Panel_functions>();
-            MonoBehaviour.print(Panel);
-            Panel.update_labels();
+        Panel_functions[] Panel = GameObject.FindObjectsOfType<Panel_functions>(true);
+        foreach(Panel_functions pan in Panel)
+        {
+            pan.update_labels();
         }
+
     }
 
     //Button events

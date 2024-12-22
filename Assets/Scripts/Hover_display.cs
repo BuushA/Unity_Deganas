@@ -49,8 +49,7 @@ public class Hover_display : MonoBehaviour
         I += "Score: " + score.ToString() + '\n';
         I += "Types: " + "[ " + type1.ToString() + ", " + type2.ToString()
         + ", " + type3.ToString() + " ]" + '\n';
-        I += "Wants to buy: " + MoneyManager.Format_number(buy_amount) + '\n';
-        I += "Of " + item_name;
+        I += "Wants to buy: " + MoneyManager.Format_amount(item_name);
 
         return I;
     }

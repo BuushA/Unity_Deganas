@@ -16,17 +16,17 @@ public class Global_values : MonoBehaviour
     
     [SerializeField] private long starting_cash;
     [SerializeField] private int starting_hour; //has to be [0;24] otherwise it's illogical
-    [SerializeField] private float base_demand;
 
     //Names of all the items
-    public static string[] Items = {"Gasolline", "Soap"};
+    public static string[] Items = {"Gasolline", "Snacks"};
 
     //dictonary of all item prices per 1 unit
     public Dictionary<string, long> Dic_item_price = new Dictionary<string, long>();
+    //Stores selling prices
+    public Dictionary<string, int> Dic_item_sell = new Dictionary<string, int>();
     //dictionary of how many items are in possesion
     public Dictionary<string, long> Dic_item_amount = new Dictionary<string, long>();
     //dictionary of total demand for the product
-    public Dictionary<string, float> Dic_item_demand = new Dictionary<string, float>();
 
     
 
@@ -51,14 +51,12 @@ public class Global_values : MonoBehaviour
         }
     }
 
-
-    //every item will have the same demand at the start
-    public void Base_Demand_dic(float base_demand)
+    public void create_sell_dic(int[] unit_price)
     {
         int item_len = Items.Length;
         for(int i = 0; i < item_len; i++)
         {
-            Dic_item_demand.Add(Items[i], base_demand);
+            Dic_item_sell.Add(Items[i], unit_price[i]);
         }
     }
 
@@ -75,5 +73,7 @@ public class Global_values : MonoBehaviour
             Dic_item_amount.Add(item_name, amount);
         }
     }
+
+
 
 }

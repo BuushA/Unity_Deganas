@@ -76,8 +76,6 @@ public class customer_script : MonoBehaviour
         {"80%", 2},
         {"100%", 1}
     };
-     
-
     //Creates a list of customers with all the properties and product info;
     //Temporary values for now
 
@@ -97,7 +95,7 @@ public class customer_script : MonoBehaviour
         //start buying start after pressing the scene button
     }
     
-    Customer[] person_list = new Customer[max_clients];
+
     int person_max = max_clients;
     bool maxed;
    public void Scene_init()
@@ -202,6 +200,7 @@ public class customer_script : MonoBehaviour
             //amount of products they will buy
             item_name = Global_values.Items[It_id];
             int max_amount = (int)GB_script.Dic_item_amount[item_name];
+            MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
 
             //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
             int total = 0;
@@ -216,7 +215,8 @@ public class customer_script : MonoBehaviour
                 S = S.Remove(2); 
             else S = S.Remove(3);
             //new max_amount
-            max_amount = max_amount / 100 * Int32.Parse(S);
+            max_amount = (int)(max_amount * (1 + Int32.Parse(S)/ 100));
+            MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
             amount = rand.Next(1, max_amount);
     }
 
@@ -261,19 +261,15 @@ public class customer_script : MonoBehaviour
     int CNo = new();
     public void Start_buying()
     {
+        
+        //Recreate an array
+        //Add additional values if needed in the future
+        Customer[] person_list = (Customer[]) Client_list.Clone();
         bool searching = true;
         int n = 0;
         Customer person = new();
         //Client_debug();
         //MonoBehaviour.print(Client_number);
-
-        //Recreate an array
-        //Add additional values if needed in the future
-        for(int i = 0; i < Client_number; i++)
-        {
-            person_list[i].buy_amount = Client_list[i].buy_amount;
-        }
-        
 
         
         while(searching == true)
@@ -307,13 +303,11 @@ public class customer_script : MonoBehaviour
 
         if(Stop == false)
         {
-            string request = "Buying " + Money_manager.Format_number(person.buy_amount) + " " + item_name;
+
+            string request = "Buying " + Money_manager.Format_amount(item_name);
             Money_manager.to_label(request_label, request);
 
             
-            
-            
-
             //button_option handles the prices and other modifiers (types, score, etc.)
             Button_options.New_Customer(item_name, person.buy_amount, Client_list[CNo].score);
 
@@ -355,7 +349,6 @@ public class customer_script : MonoBehaviour
         //check if the time doesn't go over the limit
         //Unfair mechanic, change accuracy later
         int time_taken = (int)(time_efficiency - (1 - score / 100));
-        MonoBehaviour.print(time_taken);
         _worked_hours += time_taken;
         Global_values.time += time_taken;
         Money_manager.update_time_label(2);

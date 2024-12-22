@@ -13,9 +13,13 @@ public class Prod_Prices : MonoBehaviour
 
     //add a configurable price for 1 unit
     [SerializeField] private long Gasoline_price;
+    [SerializeField] private long Snacks_price;
 
     //Global_values reference
     [SerializeField] Global_values GB_script;
+    
+    public const int Count = 2;
+    public int[] SellPrice = new int[Count];
 
 
 
@@ -28,12 +32,13 @@ public class Prod_Prices : MonoBehaviour
         Gasoline = Gasoline_price;
 
         //load prices into an array
-        long[] unit_price = {Gasoline_price, 1000l};
+        long[] unit_price = {Gasoline_price, Snacks_price};
 
 
 
         //Initialize the dictionary inside Global_values script
         GB_script.create_price_dic(unit_price);
+        GB_script.create_sell_dic(SellPrice);
     }
 
 

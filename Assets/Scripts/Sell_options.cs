@@ -52,7 +52,7 @@ public class Sell_options : MonoBehaviour
     {
         //init labels;
         item_name = name_ref;
-        long product_price = GB_script.Dic_item_price[item_name];
+        int product_price = GB_script.Dic_item_sell[item_name];
         score = SC;
         sell_amount = amount_req;
         price = (long)(sell_amount * product_price * (1 + score/10));
@@ -72,10 +72,16 @@ public class Sell_options : MonoBehaviour
         //sell product normally
         Global_values.money += price; //+money
         GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
+
+        MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
        
         
         if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count > 1)
-            GB_script.Dic_item_amount.Remove(item_name);
+        {
+           GB_script.Dic_item_amount.Remove(item_name);
+           MonoBehaviour.print(GB_script.Dic_item_amount);
+        }
+        
         else if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count == 1)
         {
             

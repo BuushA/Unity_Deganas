@@ -12,8 +12,8 @@ public class Panel_functions : MonoBehaviour
 
     //dependencies for script
     [SerializeField] string item_name;
-    [SerializeField] LabelMan Money_manager;
     [SerializeField] Global_values GB_script;
+    private LabelMan Money_manager;
     
 
     //labels - UI
@@ -36,7 +36,7 @@ public class Panel_functions : MonoBehaviour
     //tags will be used to update all labels
     void Awake()
     {   
-        this.tag = "Product_Panel";
+        //gameObject.tag = "Product_Panel";
     }
 
     // Start is called before the first frame update
@@ -55,8 +55,8 @@ public class Panel_functions : MonoBehaviour
         Money_manager.to_label(Tunit_price, text);
         //amount of items switches between scenes
         
-        if(GB_script.Dic_item_amount.Count > 0)
-            text = Money_manager.Format_number(GB_script.Dic_item_amount[item_name] + 0) + " of" + '\n' + item_name;
+        if(GB_script.Dic_item_amount.Count > 0 && GB_script.Dic_item_amount.ContainsKey(item_name))
+            text = Money_manager.Format_amount(item_name);
         else
             text = "0" + " of" + '\n' + item_name;
         Money_manager.to_label(Tunit_amount, text);
@@ -65,6 +65,7 @@ public class Panel_functions : MonoBehaviour
     //display and calculate the price
     public void New_amount(string M)
     {
+        MonoBehaviour.print(Money_manager);
         //get the value from input
         //M is always a number;
         M = InBuy_amount.text;
@@ -137,16 +138,9 @@ public class Panel_functions : MonoBehaviour
         {
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
-            try {
-                Money_manager.update_money_label(1);
-                //Update only the amount
-                string text = Money_manager.Format_number(GB_script.Dic_item_amount[item_name] + 0) + " of" + '\n' + item_name;
-                Money_manager.to_label(Tunit_amount, text);
-            }
-            catch (NullReferenceException e)
-            {
-                Debug.Log("Money manager is not set");
-            }
+            Money_manager.update_money_label(1);
+            //Update only the amount
+            Money_manager.to_label(Tunit_amount, Money_manager.Format_amount(item_name));
         }
     }
 

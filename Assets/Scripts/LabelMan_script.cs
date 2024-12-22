@@ -20,6 +20,8 @@ public class LabelMan : MonoBehaviour
 
     //Object make calls to update their label
     public static LabelMan reference;
+    private Global_values GB_script;
+    
     
     
     void Awake()
@@ -82,5 +84,11 @@ public class LabelMan : MonoBehaviour
         }
        
       return (p+","+(number).ToString().Substring(m,k)+" " +trump[n]);
+    }
+
+    public string Format_amount(string item_name)
+    {
+        GB_script = Global_values.reference;
+        return GB_script.Dic_item_amount[item_name].ToString() + " of" + "\n" + item_name;
     }
 }
