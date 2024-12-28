@@ -71,6 +71,7 @@ public class Sell_options : MonoBehaviour
         //Current amount is always above selling
         //sell product normally
         Global_values.money += price; //+money
+        MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
         GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
 
         MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");

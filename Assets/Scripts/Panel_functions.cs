@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 
 using TMPro;
+using System.Runtime.Versioning;
 
 public class Panel_functions : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Panel_functions : MonoBehaviour
     [SerializeField] string item_name;
     [SerializeField] Global_values GB_script;
     private LabelMan Money_manager;
+    private Upgrades Upgrades_script;
     
 
     //labels - UI
@@ -31,6 +33,9 @@ public class Panel_functions : MonoBehaviour
     //set price
     private long item_price;
     private long amount;
+    private long max_amount;
+    private int mod; //amount modifier
+    long owned;
 
     //set the tag
     //tags will be used to update all labels
@@ -43,6 +48,7 @@ public class Panel_functions : MonoBehaviour
     void Start()
     {
         Money_manager = LabelMan.reference;
+        Upgrades_script = Upgrades.reference;
         update_labels();
     }
 
@@ -52,28 +58,48 @@ public class Panel_functions : MonoBehaviour
         //price of the item might decrease or increase
         item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
         text = Money_manager.Format_number(item_price) + " $";
+        max_amount = Global_values.stockAmount;
         Money_manager.to_label(Tunit_price, text);
         //amount of items switches between scenes
         
-        if(GB_script.Dic_item_amount.Count > 0 && GB_script.Dic_item_amount.ContainsKey(item_name))
-            text = Money_manager.Format_amount(item_name);
+        mod = Upgrades_script.storageMod(Upgrades_script.Dic_upgrades["Stockpile"].tier);
+
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+        {
+            if(mod == 999)
+            {
+                max_amount = long.MaxValue;
+                text = Money_manager.Format_amount(item_name) + "/" + "infinite";
+            }
+            else 
+                text = Money_manager.Format_amount(item_name) + "/" + max_amount.ToString();
+        }
         else
-            text = "0" + " of" + '\n' + item_name;
+            text = "0" + "/" + max_amount.ToString();
+
+
         Money_manager.to_label(Tunit_amount, text);
     }
 
     //display and calculate the price
     public void New_amount(string M)
     {
-        MonoBehaviour.print(Money_manager);
         //get the value from input
         //M is always a number;
         M = InBuy_amount.text;
+        max_amount = Global_values.stockAmount;
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
 
         try {
             amount = long.Parse(M);
 
-            if(amount >= 0 )
+
+
+            if(amount >= 0  && amount + owned <= max_amount)
             {
             buy_price = amount * item_price; 
 
@@ -81,16 +107,15 @@ public class Panel_functions : MonoBehaviour
             Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
             }
         }
-
-        //Checks for errors
-        //Implement more variaty and Price reset
         catch (FormatException e)
         {
+            //Checks for errors
+            //Implement more variaty and Price reset
             Debug.Log($"Unable to parse '{M}'"); 
         }
         catch (OverflowException e)
         {
-            Debug.Log("This nubmer cannot fith in an Int32");
+            Debug.Log("This nubmer cannot fit in an Int32");
         }
 
     }
@@ -111,6 +136,11 @@ public class Panel_functions : MonoBehaviour
 
     public void Buy_item()
     {
+        max_amount = Global_values.stockAmount;
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
         
         if(Global_values.money < buy_price)
         {
@@ -133,21 +163,42 @@ public class Panel_functions : MonoBehaviour
                 StartCoroutine(label_message(1.5f, "Can't buy dust"));
             }
        }
+       else if(amount + owned > max_amount)
+       {
+            Debug.Log("Over the max amount");
 
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1.5f, "Too many products"));
+            }
+       }
         else
         {
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
             Money_manager.update_money_label(1);
             //Update only the amount
-            Money_manager.to_label(Tunit_amount, Money_manager.Format_amount(item_name));
+            update_labels();
         }
     }
 
     public void max_possible()
     {
+        max_amount = Global_values.stockAmount;
         amount = Global_values.money /  GB_script.Dic_item_price[item_name];
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
+
+
+        if(amount + owned > max_amount)
+            amount = max_amount - owned;
+        
+
         buy_price = amount * item_price;
+
         Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
     }
 }
