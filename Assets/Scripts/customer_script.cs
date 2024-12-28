@@ -199,7 +199,7 @@ public class customer_script : MonoBehaviour
             
             //amount of products they will buy
             item_name = Global_values.Items[It_id];
-            int max_amount = (int)GB_script.Dic_item_amount[item_name];
+            int max_amount = (int)Global_values.stockAmount;
             MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
 
             //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
@@ -215,7 +215,7 @@ public class customer_script : MonoBehaviour
                 S = S.Remove(2); 
             else S = S.Remove(3);
             //new max_amount
-            max_amount = (int)(max_amount * (1 + Int32.Parse(S)/ 100));
+            max_amount = max_amount - (max_amount * Int32.Parse(S)/ 100);
             MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
             amount = rand.Next(1, max_amount);
     }
@@ -304,7 +304,7 @@ public class customer_script : MonoBehaviour
         if(Stop == false)
         {
 
-            string request = "Buying " + Money_manager.Format_amount(item_name);
+            string request = "Buying " + person.buy_amount + "\n" + item_name;
             Money_manager.to_label(request_label, request);
 
             

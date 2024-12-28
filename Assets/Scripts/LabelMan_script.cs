@@ -86,9 +86,10 @@ public class LabelMan : MonoBehaviour
       return (p+","+(number).ToString().Substring(m,k)+" " +trump[n]);
     }
 
+    //Legacy method
     public string Format_amount(string item_name)
     {
         GB_script = Global_values.reference;
-        return GB_script.Dic_item_amount[item_name].ToString() + " of" + "\n" + item_name;
+        return GB_script.Dic_item_amount[item_name].ToString();
     }
 }

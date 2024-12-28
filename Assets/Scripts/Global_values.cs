@@ -9,13 +9,16 @@ public class Global_values : MonoBehaviour
 {
     public static long money;
     public static int time;
-    [SerializeField] public static long Station_price = 10000;
+    public static long stockAmount;
+    [SerializeField] private long startingStock = 1000;
+    public static long Station_price = 10000;
     //pass the reference maby use a pointer (?)
     public static Global_values reference;
 
     
     [SerializeField] private long starting_cash;
     [SerializeField] private int starting_hour; //has to be [0;24] otherwise it's illogical
+    
 
     //Names of all the items
     public static string[] Items = {"Gasolline", "Snacks"};
@@ -26,9 +29,6 @@ public class Global_values : MonoBehaviour
     public Dictionary<string, int> Dic_item_sell = new Dictionary<string, int>();
     //dictionary of how many items are in possesion
     public Dictionary<string, long> Dic_item_amount = new Dictionary<string, long>();
-    //dictionary of total demand for the product
-
-    
 
 
     // Awake is called before the application starts
@@ -39,9 +39,12 @@ public class Global_values : MonoBehaviour
             //time counted by hours
             time = starting_hour; 
             reference = this;
+            stockAmount = startingStock;
     }
 
 
+
+    //Could create a template function to create Dics
     public void create_price_dic(long[] unit_price)
     {
         int item_len = Items.Length;
@@ -74,6 +77,9 @@ public class Global_values : MonoBehaviour
         }
     }
 
-
+    public void increase_stock(int mod)
+    {
+        stockAmount = startingStock * mod;
+    }
 
 }
