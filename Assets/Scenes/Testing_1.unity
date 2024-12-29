@@ -618,9 +618,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Panel_functions, Assembly-CSharp
-        m_MethodName: Buy_item
+      - m_Target: {fileID: 1998182951}
+        m_TargetAssemblyTypeName: Upgrade_functions, Assembly-CSharp
+        m_MethodName: buy_upgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3457,6 +3457,8 @@ MonoBehaviour:
   Description: {fileID: 1599773034}
   Tooltip: {fileID: 939361880}
   Base: {fileID: 2075964550}
+  Button_buy: {fileID: 1008546712}
+  active_message: 0
 --- !u!114 &659505680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5236,9 +5238,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Panel_functions, Assembly-CSharp
-        m_MethodName: Buy_item
+      - m_Target: {fileID: 659505679}
+        m_TargetAssemblyTypeName: Upgrade_functions, Assembly-CSharp
+        m_MethodName: buy_upgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6263,6 +6265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d04c7d8c2e1768145b784382b6d233ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingStock: 1000
   starting_cash: 125000
   starting_hour: 0
 --- !u!4 &1244791801
@@ -10097,6 +10100,8 @@ MonoBehaviour:
   Description: {fileID: 1326138340}
   Tooltip: {fileID: 1627894963}
   Base: {fileID: 1254166114}
+  Button_buy: {fileID: 54449660}
+  active_message: 0
 --- !u!114 &1998182952
 MonoBehaviour:
   m_ObjectHideFlags: 0

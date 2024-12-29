@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class Upgrades : MonoBehaviour
 {
+
+    Global_values GB_script;
+
     int increment = 5;
 
 
@@ -24,6 +27,7 @@ public class Upgrades : MonoBehaviour
     void Awake()
     {
         reference = this;
+        GB_script = Global_values.reference;
         create_upgrades_dic();
     }
 
@@ -37,6 +41,7 @@ public class Upgrades : MonoBehaviour
         }
     }
 
+    //call to get the modifier
     public int Modifier(int id, int tier)
     {
         switch(id)
@@ -49,6 +54,24 @@ public class Upgrades : MonoBehaviour
 
             default:
             return -1;
+        }
+    }
+
+
+    //call on Upgrade_function buy to modify values
+    public void Modify(int id, int tier)
+    {
+        switch(id)
+        {
+            case 0:
+            GB_script.increase_stock(storageMod(tier));
+            break;
+
+            case 1:
+            return;
+
+            default:
+            return;
         }
     }
 

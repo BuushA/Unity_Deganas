@@ -19,7 +19,8 @@ public class Upgrade_functions : MonoBehaviour
     [SerializeField] private TMP_Text Description;
     [SerializeField] GameObject Tooltip;
     [SerializeField] GameObject Base;
-
+    [SerializeField] GameObject Button_buy;
+ 
     //Script dependencies
     Global_values GB_script;
     LabelMan MoneyManager;
@@ -47,14 +48,42 @@ public class Upgrade_functions : MonoBehaviour
     }
 
 
-
-
-    private void buy_upgrade()
+    public bool active_message = false;
+    //Coroutine for delaying
+    IEnumerator label_message(float delay, string msg)
     {
-        return;
+        string tmp = Price.text;
+        Price.text = msg;
+        yield return new WaitForSeconds(delay);
+        Price.text = tmp;
+        active_message = false;
     }
 
-
+    public void buy_upgrade()
+    {
+        //Check if you have enough money
+        if(Global_values.money < buy_price)
+        {
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1f, "Not enough $$$"));
+            }
+        }
+        //buy upgrade
+        else
+        {
+            //update labels and upgrade values
+            Global_values.money -= buy_price;
+            Upgrade_script.Dic_upgrades[upgrade_name].tier += 1; tier++;
+            buy_price = Upgrade_script.priceMod(buy_price, upgrade_name);
+            Base_UI();
+            Upgrade_script.Modify(method_id, tier);
+            //lvl 3 = hide the button
+            if(tier == 3)
+                Button_buy.SetActive(false);
+        }
+    }
 
 
     private void Base_UI()
