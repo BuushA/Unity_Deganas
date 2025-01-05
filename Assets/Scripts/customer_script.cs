@@ -66,6 +66,10 @@ public class customer_script : MonoBehaviour
     private string item_name;
     [SerializeField] int gen = 5;
 
+    const int work_hours = 10;
+    int _worked_hours = 0;
+
+
     //Weighted values;
     Dictionary<string, int> T = new Dictionary<string, int>();
     //RNG table, case sensitive
@@ -117,6 +121,7 @@ public class customer_script : MonoBehaviour
         person_max = Client_number;
         person_list = (Customer[]) Client_list.Clone();
         n = 0;
+        _worked_hours = 0;
         Start_buying();
         
     }
@@ -347,19 +352,20 @@ public class customer_script : MonoBehaviour
     }
 
 
-    const int work_hours = 18;
-    int _worked_hours = 0;
     public void Time_spent(int score)
     {
         //check if the time doesn't go over the limit
-        //Unfair mechanic, change accuracy later
-        int time_taken = (int)(time_efficiency - (1 - score / 100));
+        int time_taken = time_efficiency;
         _worked_hours += time_taken;
         Global_values.time += time_taken;
         Money_manager.update_time_label(2);
 
-        if(work_hours - (_worked_hours + time_taken) <= 0)
+        if(work_hours <= (_worked_hours))
+        {
+            Money_manager.update_time_label(1);
             Stop = true;
+        }
+            
     }
 
     //Both functions bellow add something to a customer

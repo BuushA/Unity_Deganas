@@ -2692,6 +2692,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Customers: {fileID: 2142264904}
+  minus_score: 5
+  plus_score: 3
 --- !u!114 &454036804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3448,7 +3450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc99ec9876788d747a60b76bc6e78c90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buy_price: 200
+  buy_price: 50000
   upgrade_name: Stockpile
   Tooltip_text: This is COOL
   Header: {fileID: 2070443598}
@@ -6217,10 +6219,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c67cc573c0a3654eb6686d0ba2bd738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Gasoline_price: 750
-  Snacks_price: 500
+  Gasoline_price: 10
+  Snacks_price: 2
   GB_script: {fileID: 1244791800}
-  SellPrice: e2040000ee020000
+  SellPrice: 0e0600005e010000
 --- !u!4 &1204854493
 Transform:
   m_ObjectHideFlags: 0
@@ -6266,8 +6268,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingStock: 1000
-  starting_cash: 125000
-  starting_hour: 0
+  starting_cash: 6000
+  starting_hour: 8
 --- !u!4 &1244791801
 Transform:
   m_ObjectHideFlags: 0
@@ -9770,7 +9772,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1923481295}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 454036803}
+        m_TargetAssemblyTypeName: Sell_options, Assembly-CSharp
+        m_MethodName: Risky_lower
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1923481295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10091,8 +10105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc99ec9876788d747a60b76bc6e78c90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buy_price: 9500
-  upgrade_name: SellQuality
+  buy_price: 12500
+  upgrade_name: Quality
   Tooltip_text: ga
   Header: {fileID: 41774756}
   Tier: {fileID: 487888403}
@@ -10902,7 +10916,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2092040618}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 454036803}
+        m_TargetAssemblyTypeName: Sell_options, Assembly-CSharp
+        m_MethodName: Risky_increase
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2092040618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10987,7 +11013,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgrades:
   - Stockpile
-  - SellQuality
+  - Quality
+  - TIme
+  - Efficiency
 --- !u!1 &2142264902
 GameObject:
   m_ObjectHideFlags: 0
@@ -11036,7 +11064,7 @@ MonoBehaviour:
   Button_options: {fileID: 454036803}
   Stop: 0
   amount_req: 0
-  time_efficiency: 3
+  time_efficiency: 4
   Client_number: 0
   type_1:
   - Young
@@ -11050,7 +11078,7 @@ MonoBehaviour:
   - Alcoholic
   - Cheap
   - Spender
-  gen: 4
+  gen: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
