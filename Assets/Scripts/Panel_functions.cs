@@ -49,6 +49,7 @@ public class Panel_functions : MonoBehaviour
     {
         Money_manager = LabelMan.reference;
         Upgrades_script = Upgrades.reference;
+        GB_script = Global_values.reference;
         update_labels();
     }
 
@@ -62,18 +63,12 @@ public class Panel_functions : MonoBehaviour
         Money_manager.to_label(Tunit_price, text);
         //amount of items switches between scenes
         
-        mod = Upgrades_script.storageMod(Upgrades_script.Dic_upgrades["Stockpile"].tier);
+        //mod = Upgrades_script.storageMod(Upgrades_script.Dic_upgrades["Stockpile"].tier);
 
 
         if(GB_script.Dic_item_amount.ContainsKey(item_name))
         {
-            if(mod == 999)
-            {
-                max_amount = long.MaxValue;
-                text = Money_manager.Format_amount(item_name) + "/" + "infinite";
-            }
-            else 
-                text = Money_manager.Format_amount(item_name) + "/" + max_amount.ToString();
+            text = Money_manager.Format_amount(item_name) + "/" + max_amount.ToString();
         }
         else
             text = "0" + "/" + max_amount.ToString();

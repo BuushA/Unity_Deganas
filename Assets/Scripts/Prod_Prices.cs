@@ -32,7 +32,7 @@ public class Prod_Prices : MonoBehaviour
         Gasoline = Gasoline_price;
 
         //load prices into an array
-        long[] unit_price = {Gasoline_price, Snacks_price};
+        long[] unit_price = {Gasoline_price*100, Snacks_price*100};
 
 
 

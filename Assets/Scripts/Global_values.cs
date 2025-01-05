@@ -11,7 +11,7 @@ public class Global_values : MonoBehaviour
     public static int time;
     public static long stockAmount;
     [SerializeField] private long startingStock = 1000;
-    public static long Station_price = 10000;
+    public static long Station_price = 1000;
     //pass the reference maby use a pointer (?)
     public static Global_values reference;
 
@@ -36,6 +36,7 @@ public class Global_values : MonoBehaviour
     void Awake()
     {
             money = starting_cash*100;
+            Station_price *= 100;
             //time counted by hours
             time = starting_hour; 
             reference = this;

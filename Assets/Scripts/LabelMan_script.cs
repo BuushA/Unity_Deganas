@@ -86,6 +86,17 @@ public class LabelMan : MonoBehaviour
       return (p+","+(number).ToString().Substring(m,k)+" " +trump[n]);
     }
 
+    //call to update product panels
+    public void update_Panels()
+    {
+        //Panel labels
+        Panel_functions[] Panel = GameObject.FindObjectsOfType<Panel_functions>(true);
+        foreach(Panel_functions pan in Panel)
+        {
+            pan.update_labels();
+        }
+    }
+
     //Legacy method
     public string Format_amount(string item_name)
     {

@@ -49,9 +49,9 @@ public class customer_script : MonoBehaviour
     [HideInInspector]
     public int Client_number = 0;
     //limits for generating Clients
-    const int max_clients = 100;
-    const int x_max = 15;
-    const int y_max = 15;
+    const int max_clients = 48;
+    const int x_max = 8;
+    const int y_max = 8;
     const int max_score = 100;
     //public string[] types = {"Young", "Alcoholic", "Spender", "Cheap", "Old", "Poor"}; //Set Values inside the inspector
 
@@ -68,11 +68,16 @@ public class customer_script : MonoBehaviour
 
     //Weighted values;
     Dictionary<string, int> T = new Dictionary<string, int>();
+    //RNG table, case sensitive
     Dictionary<string, int> Buy = new Dictionary<string, int>
     {
-        {"20%", 10},
+        {"10%", 30},
+        {"20%", 20},
+        {"25%", 15},
         {"40%", 6},
+        {"50%", 5},
         {"60%", 4},
+        {"75%", 3},
         {"80%", 2},
         {"100%", 1}
     };
@@ -98,6 +103,10 @@ public class customer_script : MonoBehaviour
 
     int person_max = max_clients;
     bool maxed;
+    int n = 0;
+    //Recreate an array
+    //Add additional values if needed in the future
+    Customer[] person_list = new Customer[101];
    public void Scene_init()
     {
         Stop = false;
@@ -106,6 +115,8 @@ public class customer_script : MonoBehaviour
 
         //make a copy of an array;
         person_max = Client_number;
+        person_list = (Customer[]) Client_list.Clone();
+        n = 0;
         Start_buying();
         
     }
@@ -192,14 +203,14 @@ public class customer_script : MonoBehaviour
 
     private void Products(out int It_id, out long amount)
     {
-            //add what product they will buy
-            int Dcount = GB_script.Dic_item_amount.Count;
+            //How many product are on sale
+            int Dcount = GB_script.Dic_item_sell.Count;
             It_id = rand.Next(0, Dcount);
 
             
             //amount of products they will buy
             item_name = Global_values.Items[It_id];
-            int max_amount = (int)Global_values.stockAmount;
+            int max_amount = (int)Global_values.stockAmount / 2;
             MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
 
             //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
@@ -217,7 +228,9 @@ public class customer_script : MonoBehaviour
             //new max_amount
             max_amount = max_amount - (max_amount * Int32.Parse(S)/ 100);
             MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
+
             amount = rand.Next(1, max_amount);
+            MonoBehaviour.print("BOUGHt" + $"{amount}");
     }
 
     private void get_coordinates(out int x_cord, out int y_cord, int n)
@@ -262,44 +275,33 @@ public class customer_script : MonoBehaviour
     public void Start_buying()
     {
         
-        //Recreate an array
-        //Add additional values if needed in the future
-        Customer[] person_list = (Customer[]) Client_list.Clone();
-        bool searching = true;
-        int n = 0;
+
         Customer person = new();
+        long current_amount = new();
         //Client_debug();
         //MonoBehaviour.print(Client_number);
 
-        
-        while(searching == true)
+         if(person_max == 0)
         {
-            if(person_max == 0)
-            {
-                Stop = true;
-                break;
-            }
+            Stop = true;
+        }
 
-            bool new_person = true;
             CNo = rand.Next(0, person_max);
             person = person_list[CNo];
             
-            //check if the person already visited
-            
             item_name = Global_values.Items[person.item_id];
-            long current_amount = GB_script.Dic_item_amount[item_name];
-
-
-            if( (current_amount >= person.buy_amount && person.buy_amount > 0))
-                searching = false;
+            if(GB_script.Dic_item_amount.ContainsKey(item_name) == true)
+                current_amount = GB_script.Dic_item_amount[item_name];
+            else
+            {
+                current_amount = 0;
+            }
 
             if(n == max_clients)
             {
                 Stop = true;
-                break;
             }
             n++;
-        }
 
         if(Stop == false)
         {
@@ -309,7 +311,8 @@ public class customer_script : MonoBehaviour
 
             
             //button_option handles the prices and other modifiers (types, score, etc.)
-            Button_options.New_Customer(item_name, person.buy_amount, Client_list[CNo].score);
+            //handles the button labels aswell
+            Button_options.New_Customer(item_name, person.buy_amount, person.score, current_amount, CNo);
 
             //remove people who have already visited
             for(int i = CNo; i < person_max - 1; i++)
@@ -321,8 +324,10 @@ public class customer_script : MonoBehaviour
             person_max--;
 
             //regenerate the customer values based on the amount of visits it has
-            ValueRegen(CNo);
-            Client_list[CNo].visits += 1;
+            if(Client_list[CNo].visits % 2 == 0)
+                ValueRegen(CNo);
+            else
+                Client_list[CNo].visits += 1;
         }
         
 
@@ -342,7 +347,7 @@ public class customer_script : MonoBehaviour
     }
 
 
-    const int work_hours = 16;
+    const int work_hours = 18;
     int _worked_hours = 0;
     public void Time_spent(int score)
     {
@@ -357,20 +362,36 @@ public class customer_script : MonoBehaviour
             Stop = true;
     }
 
+    //Both functions bellow add something to a customer
+    //Call to penalize the player
+    public void Penalty(int id, int minus)
+    {
+        MonoBehaviour.print("Customer score before: " + $"{Client_list[id].score}");
+        if(Client_list[id].score > minus)
+        Client_list[id].score -= minus;
+        MonoBehaviour.print("Customer score AFTER: " + $"{Client_list[id].score}");
+    }
+
+    //Call to reward the player
+    public void Grace(int id, int plus)
+    {
+        MonoBehaviour.print("Customer score before: " + $"{Client_list[id].score}");
+        if(Client_list[id].score < 100-plus)
+        Client_list[id].score += plus;
+        MonoBehaviour.print("Customer score AFTER: " + $"{Client_list[id].score}");
+
+    }
+
 
     private void ValueRegen(int id)
     {
-        int visited = Client_list[id].visits;
         //MonoBehaviour.print("Visited - " + $"{Client_list[id].visits}");
         
         //refresh item and buy amount
         int ItemId = 0; long BuyAmount = 0;
-        if(visited % 2 == 0)
-        {
-            Products(out ItemId, out BuyAmount);
-            Client_list[id].item_id = ItemId;
-            Client_list[id].buy_amount = BuyAmount;
-        }
+        Products(out ItemId, out BuyAmount);
+        Client_list[id].item_id = ItemId;
+        Client_list[id].buy_amount = BuyAmount;
     }
 
     public int Get_Score(int ClientID)
@@ -380,7 +401,7 @@ public class customer_script : MonoBehaviour
 
         // get the distance to the nearest station
         MonoBehaviour.print("SCore of client - " + $"{ClientID}");
-        int smallest = 999;
+        int biggest = 0;
         int Cl_x = Client_list[ClientID].x;
         int Cl_y = Client_list[ClientID].y;
         int distance = 0;
@@ -395,15 +416,15 @@ public class customer_script : MonoBehaviour
 
             //MonoBehaviour.print("Distance is: " + $"{distance}");
 
-            if(distance < smallest)
-                smallest = distance;
+            if(distance > biggest)
+                biggest = distance;
 
         }
         //MonoBehaviour.print("smallest dist: " + $"{smallest}");
         //calculate the score based on the distance;
-        //distance totals to 50% of score
-        int score = 50 - smallest;
-
+        //Score totals to up to 20% (if the grid is 8x8)
+        //Make the calculation automatic and flexible 
+        int score = (int)(biggest*2.5);
         return score;
     }
 

@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using System.Diagnostics.Contracts;
 using System;
+using System.Runtime.Serialization;
+using Microsoft.Win32.SafeHandles;
 
 public class Sell_options : MonoBehaviour
 {
@@ -27,6 +29,13 @@ public class Sell_options : MonoBehaviour
     private long sell_amount;
     private string item_name;
     private int score;
+    private long current_amount;
+    private int customer_id;
+
+    [SerializeField] int minus_score = 5;
+    [SerializeField] int plus_score = 3;
+
+    bool Quit = new();
 
 
 
@@ -48,74 +57,141 @@ public class Sell_options : MonoBehaviour
         Money_manager = LabelMan.reference;
     }
 
-    public void New_Customer(string name_ref, long amount_req, int SC)
+    public void New_Customer(string name_ref, long amount_req, int SC, long curr, int id)
     {
         //init labels;
         item_name = name_ref;
-        int product_price = GB_script.Dic_item_sell[item_name];
-        score = SC;
         sell_amount = amount_req;
-        price = (long)(sell_amount * product_price * (1 + score/10));
+        score = SC;
+        current_amount = curr;
+        Quit = false;
+        customer_id = id;
+        
 
-        //pass the value to button_money to update the money;
-        //temporary labels
-        Neutral.text = Money_manager.Format_number(price);
-        //increase
 
-        //lower
+        //If there is nothing
+        if(current_amount == 0)
+        {
+            Quit = true;
+            Neutral.text = "Can't find " + item_name;
+            Increase.text = "";
+            Lower.text = "";
+        }
+        else if(current_amount < amount_req)
+        {   
+            
+            Quit = true;
+            Neutral.text = "Stock up \n next time";
+            Increase.text = "";
+            Lower.text = "";
+        }
+        else
+        {
+        
+            int product_price = GB_script.Dic_item_sell[item_name];
+            price = (long)(sell_amount * product_price * (1 + score/10));
+            long og_price = price;
+
+
+
+            //pass the value to button_money to update the money;
+            Neutral.text = Money_manager.Format_number(price);
+            //increase by 20%
+            price = (long)(og_price * 1.2);
+            Increase.text = Money_manager.Format_number(price) + "\n +20% / - " + minus_score.ToString() + " score";
+            //lower by 20%
+            price = (long)(og_price * 0.8);
+            Lower.text = Money_manager.Format_number(price) + "\n -20% / + " + plus_score.ToString() + " score";
+        }
     }
 
+    //Time_spent() tracks the time and stops selling when it reaches the limit
     public void Neutral_sell()
     {
-        bool continue_selling = true; 
-        //Current amount is always above selling
-        //sell product normally
-        Global_values.money += price; //+money
-        MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
-        GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
-
-        MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
-       
-        
-        if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count > 1)
+        //Nothing to buy, so the customer quits
+        if(Quit)
         {
-           GB_script.Dic_item_amount.Remove(item_name);
-           MonoBehaviour.print(GB_script.Dic_item_amount);
-        }
-        
-        else if(GB_script.Dic_item_amount[item_name] <= 0 && GB_script.Dic_item_amount.Count == 1)
-        {
-            
-            GB_script.Dic_item_amount.Clear();
-            Customers.Switch_to_managment();
-            continue_selling = false;
-        }
-            
-
-        
-        //update cash
-        Money_manager.update_money_label(2);
-        //add a coroutine for animation later
-        
-
-        if(continue_selling == true)
-        {
+            //Penalize the player
             // for now instantly switches customers
-            //first check if the is anything to sell
+            //restart
             Customers.Start_buying();
             Customers.Time_spent(score);
         }
-
+        //sell product normally
+        else
+        {
+            Global_values.money += price; //+money
+            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
+            GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
+            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
+        
+            //update cash
+            Money_manager.update_money_label(2);
+            //add a coroutine for animation later
+            
+            // for now instantly switches customers
+            Customers.Start_buying();
+            Customers.Time_spent(score);
+        }
     }
-
 
     public void Risky_increase()
     {
-       int a = 0;
+               //Nothing to buy, so the customer quits
+        if(Quit)
+        {
+            //Penalize the player
+            // for now instantly switches customers
+            //restart
+            Customers.Start_buying();
+            Customers.Time_spent(score);
+        }
+        //sell product normally
+        else
+        {
+            Global_values.money += (long)(price * 1.2); //+money
+            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
+            GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
+            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
+            //Lower score to the customer
+            Customers.Penalty(customer_id, minus_score);
+            //update cash
+            Money_manager.update_money_label(2);
+            //add a coroutine for animation later
+            
+            // for now instantly switches customers
+            Customers.Start_buying();
+            Customers.Time_spent(score);
+        }
     }
 
     public void Risky_lower()
     {
-        int a = 0;
+        //Nothing to buy, so the customer quits
+        if(Quit)
+        {
+            //Penalize the player
+            // for now instantly switches customers
+            //restart
+            Customers.Start_buying();
+            Customers.Time_spent(score);
+        }
+        //sell product normally
+        else
+        {
+            Global_values.money += (long)(price*0.8); //+money
+            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
+            GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
+            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
+            //add score to the customer
+            Customers.Grace(customer_id, plus_score);
+            //update cash
+            Money_manager.update_money_label(2);
+            //add a coroutine for animation later
+            
+            // for now instantly switches customers
+            Customers.Start_buying();
+            Customers.Time_spent(score);
+        }
     }
 }

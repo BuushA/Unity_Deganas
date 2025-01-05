@@ -111,7 +111,7 @@ public class Upgrades : MonoBehaviour
             return increment * increment * increment;
 
             case 3:
-            return 999; //largest possible long 
+            return increment * 1000;
         }
         return -1;
     }

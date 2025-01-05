@@ -40,6 +40,7 @@ public class Upgrade_functions : MonoBehaviour
         MoneyManager = LabelMan.reference;
         Upgrade_script = Upgrades.reference;
         Header.text = upgrade_name;
+        buy_price *= 100;
         Price.text = MoneyManager.Format_number(buy_price) + "$";
         tier = Upgrade_script.Dic_upgrades[upgrade_name].tier;
         method_id = Upgrade_script.Dic_upgrades[upgrade_name].method_id;
@@ -78,7 +79,9 @@ public class Upgrade_functions : MonoBehaviour
             Upgrade_script.Dic_upgrades[upgrade_name].tier += 1; tier++;
             buy_price = Upgrade_script.priceMod(buy_price, upgrade_name);
             Base_UI();
+            MoneyManager.update_money_label(1);
             Upgrade_script.Modify(method_id, tier);
+            MoneyManager.update_Panels();
             //lvl 3 = hide the button
             if(tier == 3)
                 Button_buy.SetActive(false);
@@ -88,6 +91,8 @@ public class Upgrade_functions : MonoBehaviour
 
     private void Base_UI()
     {
+        //price label
+        Price.text = MoneyManager.Format_number(buy_price) + "$";
         //Tiers
         string text = "";
         switch(tier)
