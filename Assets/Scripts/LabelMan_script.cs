@@ -49,6 +49,7 @@ public class LabelMan : MonoBehaviour
     //call to update scenes time label
     public void update_time_label(int Part)
     {
+        MonoBehaviour.print(Global_values.time);
         //time label
         int h = Global_values.time % 24;
         int d = Global_values.time / 24;

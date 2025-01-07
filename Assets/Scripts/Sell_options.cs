@@ -114,8 +114,8 @@ public class Sell_options : MonoBehaviour
             //Penalize the player
             // for now instantly switches customers
             //restart
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
         //sell product normally
         else
@@ -130,21 +130,21 @@ public class Sell_options : MonoBehaviour
             //add a coroutine for animation later
             
             // for now instantly switches customers
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
     }
 
     public void Risky_increase()
     {
-               //Nothing to buy, so the customer quits
+        //Nothing to buy, so the customer quits
         if(Quit)
         {
             //Penalize the player
             // for now instantly switches customers
             //restart
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
         //sell product normally
         else
@@ -160,8 +160,8 @@ public class Sell_options : MonoBehaviour
             //add a coroutine for animation later
             
             // for now instantly switches customers
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
     }
 
@@ -173,8 +173,8 @@ public class Sell_options : MonoBehaviour
             //Penalize the player
             // for now instantly switches customers
             //restart
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
         //sell product normally
         else
@@ -190,8 +190,8 @@ public class Sell_options : MonoBehaviour
             //add a coroutine for animation later
             
             // for now instantly switches customers
+            Customers.Time_spent();
             Customers.Start_buying();
-            Customers.Time_spent(score);
         }
     }
 }

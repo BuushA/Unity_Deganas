@@ -11,8 +11,6 @@ using System.Globalization;
 using System.Security;
 using System.Numerics;
 using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Reflection;
 
 
 public class customer_script : MonoBehaviour
@@ -52,6 +50,8 @@ public class customer_script : MonoBehaviour
     const int max_clients = 48;
     const int x_max = 8;
     const int y_max = 8;
+    //Occupied tile slots
+    bool[,] occupied = new bool[x_max+1, y_max+1];
     const int max_score = 100;
     //public string[] types = {"Young", "Alcoholic", "Spender", "Cheap", "Old", "Poor"}; //Set Values inside the inspector
 
@@ -61,6 +61,7 @@ public class customer_script : MonoBehaviour
     public string[] type_2 = {"Trucker", "Poor", "Millionaire"};
     //Habit, characteristic
     public string[] type_3 = {"Alcoholic", "Cheap", "Spender"};
+
 
 
     private string item_name;
@@ -107,20 +108,22 @@ public class customer_script : MonoBehaviour
 
     int person_max = max_clients;
     bool maxed;
-    int n = 0;
+    int count = 0;
     //Recreate an array
     //Add additional values if needed in the future
     Customer[] person_list = new Customer[101];
    public void Scene_init()
     {
+        Debug.Log("Initializing the scene");
         Stop = false;
         maxed = false;
         Generate_clients(gen);
-
+        Debug.Log("Know starting the rest");
         //make a copy of an array;
         person_max = Client_number;
+        //unoptimized
         person_list = (Customer[]) Client_list.Clone();
-        n = 0;
+        count = 0;
         _worked_hours = 0;
         Start_buying();
         
@@ -129,6 +132,7 @@ public class customer_script : MonoBehaviour
     Customer[] Client_list = new Customer[max_clients];
     public void Generate_clients(int n)
     {
+        Debug.Log("Started Generation");
         int x_cord, y_cord = new();
 
         if(Client_number + n >= max_clients)
@@ -140,9 +144,9 @@ public class customer_script : MonoBehaviour
                 for(int i = Client_number; i < max_clients; i++)
                 {   
                     //add random coordinates to client
-                        get_coordinates(out x_cord, out y_cord, max_clients - Client_number); //potentially add a chance
-                        Client_list[i].x = x_cord;
-                        Client_list[i].y = y_cord;
+                    get_coordinates(out x_cord, out y_cord, max_clients - Client_number); //potentially add a chance
+                    Client_list[i].x = x_cord;
+                    Client_list[i].y = y_cord;
                     //Get the competitive score based on distance
                     //needs coordinates beforehand
                     Client_list[i].score = Get_Score(i);
@@ -170,19 +174,22 @@ public class customer_script : MonoBehaviour
         
         if (Client_number < max_clients) {
         //!!!!Implement CHANCE later on!!!!
+        Debug.Log("adding new clients: HERE");
         for(int i = Client_number; i < Client_number + n; i++)
         {
-            
-            //multiplies money; adds chance to sell options; lowers time taken in the store
+            Debug.Log("New Client No. " + $"{i}");
+            //multiplies money; adds chance to  sell options; lowers time taken in the store
 
             //add random coordinates to client
                 get_coordinates(out x_cord, out y_cord, n); //potentially add a chance
+                Debug.Log("Got Coordinates");
                 Client_list[i].x = x_cord;
                 Client_list[i].y = y_cord;
 
             //Get the competitive score based on distance
             //needs coordinates beforehand
             Client_list[i].score = Get_Score(i);
+            Debug.Log("Got Score");
 
             //add random types to Client
             int Tlen = type_1.Length; Client_list[i].type1 = rand.Next(0, Tlen);
@@ -195,6 +202,7 @@ public class customer_script : MonoBehaviour
             int ItemID = 0; long BuyAmount = 0;
             //add random item and buy amount
             Products(out ItemID, out BuyAmount);
+            Debug.Log("Got Products");
             Client_list[i].item_id = ItemID;
             Client_list[i].buy_amount = BuyAmount;
 
@@ -203,7 +211,7 @@ public class customer_script : MonoBehaviour
             //Stop incrementing after max_clients
             Client_number += n;
         }
-
+        Debug.Log("Ended Client Generation");
     }
 
     private void Products(out int It_id, out long amount)
@@ -216,7 +224,6 @@ public class customer_script : MonoBehaviour
             //amount of products they will buy
             item_name = Global_values.Items[It_id];
             int max_amount = (int)Global_values.stockAmount / 2;
-            MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
 
             //add a chance for amounts. Weights are place on percentage of max_buy amount {20%: 90, 100%: 10}
             int total = 0;
@@ -241,30 +248,31 @@ public class customer_script : MonoBehaviour
     private void get_coordinates(out int x_cord, out int y_cord, int n)
     {
         //repeats until found
-        bool found = false;
+        for(int i = Client_number; i < Client_number + n; i++)
+        {
+            int x = Client_list[i].x;
+            int y = Client_list[i].y;
+            occupied[x, y] = false;
+        }
+
         x_cord = 0;
         y_cord = 0;
-        while(found == false)
-        {
-            int a = rand.Next(1, x_max-1);
-            int b = rand.Next(1, y_max-1);
-            bool no_match = true;
-            for(int j = 0; j < Client_number + n; j++)
+        int a = rand.Next(1, x_max);
+        int b = rand.Next(1, y_max);
+            
+            for(int u = a; a < y_max; u++)
             {
-                if(a == Client_list[j].x && b == Client_list[j].y)
+                for(int z = b; z < x_max; z++)
                 {
-                    no_match = false;
-                    break;
-                }                 
+                    if(occupied[z, u] == false)
+                    {
+                        x_cord = z;
+                        y_cord = u;
+                        Debug.Log($"{z}" + "," + $"{u}");
+                        return;
+                    }
+                }
             }
-
-            if(no_match == true)
-            {
-                x_cord = a;
-                y_cord = b;
-                found = true;
-            }
-        }
     }
 
     //function might be restored later
@@ -279,7 +287,7 @@ public class customer_script : MonoBehaviour
     int CNo = new();
     public void Start_buying()
     {
-        
+        Debug.Log("Started buying");
 
         Customer person = new();
         long current_amount = new();
@@ -302,11 +310,11 @@ public class customer_script : MonoBehaviour
                 current_amount = 0;
             }
 
-            if(n == max_clients)
+            if(count == max_clients)
             {
                 Stop = true;
             }
-            n++;
+            count++;
 
         if(Stop == false)
         {
@@ -352,11 +360,12 @@ public class customer_script : MonoBehaviour
     }
 
 
-    public void Time_spent(int score)
+    public void Time_spent()
     {
         //check if the time doesn't go over the limit
         int time_taken = time_efficiency;
         _worked_hours += time_taken;
+        MonoBehaviour.print("time spent == " + $"{_worked_hours}");
         Global_values.time += time_taken;
         Money_manager.update_time_label(2);
 
@@ -385,14 +394,12 @@ public class customer_script : MonoBehaviour
         if(Client_list[id].score < 100-plus)
         Client_list[id].score += plus;
         MonoBehaviour.print("Customer score AFTER: " + $"{Client_list[id].score}");
-
     }
 
 
     private void ValueRegen(int id)
     {
         //MonoBehaviour.print("Visited - " + $"{Client_list[id].visits}");
-        
         //refresh item and buy amount
         int ItemId = 0; long BuyAmount = 0;
         Products(out ItemId, out BuyAmount);

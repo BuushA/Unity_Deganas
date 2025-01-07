@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using System.Globalization;
-using System.Runtime.Serialization;
 
 public class Global_values : MonoBehaviour
 {

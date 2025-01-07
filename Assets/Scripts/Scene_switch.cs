@@ -60,6 +60,7 @@ public class Main_Scene_manager : MonoBehaviour
 
     public void switch_to_scene()
     {
+        Debug.Log("Switch scene");
         if(GB_script.Dic_item_amount.Count == 0)
         {
             active_message = true;
@@ -69,11 +70,26 @@ public class Main_Scene_manager : MonoBehaviour
         else
         {
             //change the time
-            int Starting_h = 8; //work day starts at 8
-            int Current_h = Global_values.time % 24; 
-            int time_difference = (Current_h - Starting_h);
+            //int time_difference = (Current_h - Starting_h);
             //Calculate  8:00 clock again;
-            Global_values.time += 24 - time_difference;
+
+            //288 hours
+            //current time = 0;
+            int current_time = Global_values.time % 24;
+            int add_time = 0;
+            if(current_time > 8)
+            {
+                    add_time = 24 + 8 - current_time;
+            }
+            else if(current_time < 8)
+            {
+                    add_time = 8 - current_time;
+            }
+            Global_values.time += add_time;
+
+
+
+            
 
             //change the UI
             Work_UI.SetActive(true);
