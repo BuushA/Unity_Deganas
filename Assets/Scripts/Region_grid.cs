@@ -84,8 +84,8 @@ public class Region_grid : MonoBehaviour
         tile.transform.SetSiblingIndex(0);
         //add its position to land taken
         Owned_land[x, y] = 1;
-        Stations_x[N_stations] = x;
-        Stations_x[N_stations] = y;
+        Stations_x[N_stations] = x; 
+        Stations_y[N_stations] = customer_script.y_max-1 - y; //it is in reverse here
         N_stations++;
     }
 

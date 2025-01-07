@@ -48,8 +48,8 @@ public class customer_script : MonoBehaviour
     public int Client_number = 0;
     //limits for generating Clients
     const int max_clients = 48;
-    const int x_max = 8;
-    const int y_max = 8;
+    public const int x_max = 8;
+    public const int y_max = 8;
     //Occupied tile slots
     bool[,] occupied = new bool[x_max+1, y_max+1];
     const int max_score = 100;
@@ -257,12 +257,12 @@ public class customer_script : MonoBehaviour
 
         x_cord = 0;
         y_cord = 0;
-        int a = rand.Next(1, x_max);
-        int b = rand.Next(1, y_max);
+        int a = rand.Next(0, x_max-1);
+        int b = rand.Next(0, y_max-1);
             
-            for(int u = a; a < y_max; u++)
+            for(int u = b; u < y_max; u++)
             {
-                for(int z = b; z < x_max; z++)
+                for(int z = a; z < x_max; z++)
                 {
                     if(occupied[z, u] == false)
                     {
@@ -416,14 +416,14 @@ public class customer_script : MonoBehaviour
         MonoBehaviour.print("SCore of client - " + $"{ClientID}");
         int biggest = 0;
         int Cl_x = Client_list[ClientID].x;
-        int Cl_y = Client_list[ClientID].y;
+        int Cl_y = y_max-1 - Client_list[ClientID].y; //reverse it
         int distance = 0;
         for(int i = 0; i < Grid.N_stations; i++)
         {
             int S_x = Grid.Stations_x[i];
             int S_y = Grid.Stations_y[i];
 
-            //MonoBehaviour.print("Measuring distance from: " + $"{Cl_x}, " + $"{Cl_y}"  + " to " + $"{S_x}, " + $"{S_y}");
+            MonoBehaviour.print("Measuring distance from: " + $"{Cl_x}, " + $"{Cl_y}"  + " to " + $"{S_x}, " + $"{S_y}");
 
             distance = Math.Abs(S_x - Cl_x) + Math.Abs(S_y - Cl_y);
 
@@ -435,9 +435,8 @@ public class customer_script : MonoBehaviour
         }
         //MonoBehaviour.print("smallest dist: " + $"{smallest}");
         //calculate the score based on the distance;
-        //Score totals to up to 20% (if the grid is 8x8)
         //Make the calculation automatic and flexible 
-        int score = (int)(biggest*2.5);
+        int score = (int)(biggest*2);
         return score;
     }
 
