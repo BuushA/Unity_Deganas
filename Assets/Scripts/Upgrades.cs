@@ -9,12 +9,13 @@ public class Upgrades : MonoBehaviour
 
     Global_values GB_script;
 
-    int increment = 5;
+    int storageX = 5;
+    int QualityX = 2;
 
 
     public static Upgrades reference;
     //dictionary of all the upgrades
-    public List<string> upgrades = new List<string>{"Stockpile", "SellQuality"};
+    public List<string> upgrades = new List<string>{"Stockpile", "Quality"};
     public class UP
     {
         public int tier;
@@ -50,7 +51,7 @@ public class Upgrades : MonoBehaviour
             return storageMod(tier);
 
             case 1:
-            return 0;
+            return sellQuality(tier);
 
             default:
             return -1;
@@ -66,8 +67,12 @@ public class Upgrades : MonoBehaviour
             case 0:
             GB_script.increase_stock(storageMod(tier));
             break;
-
+            
+            //No modifications
             case 1:
+            return;
+
+            case 2:
             return;
 
             default:
@@ -97,7 +102,7 @@ public class Upgrades : MonoBehaviour
     }
 
     //id - 0
-    public int storageMod(int tier)
+    int storageMod(int tier)
     {
         switch(tier)
         {
@@ -105,14 +110,36 @@ public class Upgrades : MonoBehaviour
             return 1;
 
             case 1:
-            return increment * 2;
+            return storageX * 2;
 
             case 2:
-            return increment * increment * increment;
+            return storageX * storageX * storageX;
 
             case 3:
-            return increment * 1000;
+            return storageX * 1000;
         }
         return -1;
     }
+
+    int sellQuality(int tier)
+    {
+        switch(tier)
+        {
+            case 0:
+            return 1;
+
+            case 1:
+            return QualityX;
+
+            case 2:
+            return QualityX+1;
+
+            case 3:
+            return QualityX*2+1;
+        }
+
+        return -1;
+    }
+
+
 }

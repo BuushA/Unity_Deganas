@@ -282,7 +282,6 @@ public class customer_script : MonoBehaviour
     {
         return;
     }
-
     
     int CNo = new();
     public void Start_buying()
@@ -493,7 +492,5 @@ public class customer_script : MonoBehaviour
             }
             }
         }
-
-
     }
 }

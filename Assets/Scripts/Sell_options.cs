@@ -13,6 +13,7 @@ public class Sell_options : MonoBehaviour
     //script dependencies
     [SerializeField] customer_script Customers;
     private Global_values GB_script;
+    private Upgrades upgrade;
     private LabelMan Money_manager;
 
 
@@ -55,6 +56,7 @@ public class Sell_options : MonoBehaviour
     {
         GB_script = Global_values.reference;
         Money_manager = LabelMan.reference;
+        upgrade = Upgrades.reference;
     }
 
     public void New_Customer(string name_ref, long amount_req, int SC, long curr, int id)
@@ -66,9 +68,10 @@ public class Sell_options : MonoBehaviour
         current_amount = curr;
         Quit = false;
         customer_id = id;
+
+        string upgName = "Quality";
+        int quality_mod = upgrade.Modifier(upgrade.Dic_upgrades[upgName].method_id, upgrade.Dic_upgrades[upgName].tier);
         
-
-
         //If there is nothing
         if(current_amount == 0)
         {
@@ -89,7 +92,7 @@ public class Sell_options : MonoBehaviour
         {
         
             int product_price = GB_script.Dic_item_sell[item_name];
-            price = (long)(sell_amount * product_price * (1 + score/10));
+            price = (long)(sell_amount * product_price * (1 + score/10) * quality_mod);
             long og_price = price;
 
 
