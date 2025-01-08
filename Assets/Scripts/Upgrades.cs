@@ -15,7 +15,9 @@ public class Upgrades : MonoBehaviour
 
     public static Upgrades reference;
     //dictionary of all the upgrades
-    public List<string> upgrades = new List<string>{"Stockpile", "Quality"};
+    //ADD UPGRADES THROUGH THE EDITOR
+    //IT WILL OVERIDE THEESE
+    public List<string> upgrades = new List<string>{"Stockpile", "Quality", "Time", "Efficiency"};
     public class UP
     {
         public int tier;
@@ -35,9 +37,10 @@ public class Upgrades : MonoBehaviour
     private void create_upgrades_dic()
     {
         int upgr_len = upgrades.Count;
-        
+        MonoBehaviour.print(upgr_len);
         for(int i = 0 ; i < upgr_len; i++)
         {
+            MonoBehaviour.print(upgrades[i]);
             Dic_upgrades.Add(upgrades[i], new UP {tier = 0, method_id = i});
         }
     }
@@ -52,6 +55,12 @@ public class Upgrades : MonoBehaviour
 
             case 1:
             return sellQuality(tier);
+
+            case 2:
+            return openTime(tier);
+
+            case 3:
+            return workerEfficiency(tier);
 
             default:
             return -1;
@@ -141,5 +150,44 @@ public class Upgrades : MonoBehaviour
         return -1;
     }
 
+    int openTime(int tier)
+    {
+        switch(tier)
+        {
+            case 0:
+            return 8;
 
+            case 1:
+            return 7;
+
+            case 2:
+            return 6;
+
+            case 3:
+            return 5;
+        }
+        return -1;
+    }
+
+
+    int workerEfficiency(int tier)
+    {
+        switch(tier)
+        {
+            case 0:
+            return 5;
+
+            case 1:
+            return 4;
+
+            case 2:
+            return 3;
+
+            //update for more effects
+            case 3:
+            return 2;
+        }
+        return -1;
+
+    }
 }

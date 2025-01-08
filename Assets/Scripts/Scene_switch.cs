@@ -15,6 +15,7 @@ public class Main_Scene_manager : MonoBehaviour
     [SerializeField] Global_values GB_script;
     [SerializeField] customer_script Customers;
     private LabelMan Label_Manager;
+    private Upgrades upgrades;
 
     //UI objects
     [SerializeField] GameObject Work_UI;
@@ -24,9 +25,9 @@ public class Main_Scene_manager : MonoBehaviour
     [SerializeField] TMP_Text button_label;
     [SerializeField] GameObject Operations;
 
-
-
+    //other
     bool hasStation = false;
+    Upgrades.UP TimeKey;
 
     void Awake()
     {
@@ -44,6 +45,8 @@ public class Main_Scene_manager : MonoBehaviour
         Label_Manager.update_time_label(1);
         MonoBehaviour.print("ha");
         Operations.SetActive(false);
+        upgrades = Upgrades.reference;
+        TimeKey = upgrades.Dic_upgrades["Time"];
     }
 
 
@@ -69,21 +72,17 @@ public class Main_Scene_manager : MonoBehaviour
         //has items bought
         else
         {
-            //change the time
-            //int time_difference = (Current_h - Starting_h);
-            //Calculate  8:00 clock again;
-
-            //288 hours
-            //current time = 0;
+            //change the time to opening hours
             int current_time = Global_values.time % 24;
             int add_time = 0;
-            if(current_time > 8)
+            int opening = upgrades.Modifier(TimeKey.method_id, TimeKey.tier);
+            if(current_time > opening)
             {
-                    add_time = 24 + 8 - current_time;
+                    add_time = 24 + opening - current_time;
             }
-            else if(current_time < 8)
+            else if(current_time < opening)
             {
-                    add_time = 8 - current_time;
+                    add_time = opening - current_time;
             }
             Global_values.time += add_time;
 

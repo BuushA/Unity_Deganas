@@ -22,10 +22,12 @@ public class customer_script : MonoBehaviour
     private Global_values GB_script;
     private Main_Scene_manager Scene_manager;
     private TMP_Text request_label;
+    private Upgrades upgrades;
     public bool Stop = false;
     public long amount_req;
-    [SerializeField] private int time_efficiency = 4; //4 hours
+    private int time_efficiency;
     private Chance_rng Chan;
+    Upgrades.UP EfficiencyKey;
 
     //For grid and score - competition
     private Region_grid Grid;
@@ -67,7 +69,7 @@ public class customer_script : MonoBehaviour
     private string item_name;
     [SerializeField] int gen = 5;
 
-    const int work_hours = 10;
+    const int work_hours = 12;
     int _worked_hours = 0;
 
 
@@ -101,8 +103,10 @@ public class customer_script : MonoBehaviour
         Money_manager = LabelMan.reference;
         Button_options.InitGlobal();
         Chan = Chance_rng.reference;
-
+        upgrades = Upgrades.reference;
+        EfficiencyKey = upgrades.Dic_upgrades["Efficiency"];
         //start buying start after pressing the scene button
+
     }
     
 
@@ -362,7 +366,8 @@ public class customer_script : MonoBehaviour
     public void Time_spent()
     {
         //check if the time doesn't go over the limit
-        int time_taken = time_efficiency;
+        int time_taken = upgrades.Modifier(EfficiencyKey.method_id, EfficiencyKey.tier);
+        Debug.Log(time_taken);
         _worked_hours += time_taken;
         MonoBehaviour.print("time spent == " + $"{_worked_hours}");
         Global_values.time += time_taken;

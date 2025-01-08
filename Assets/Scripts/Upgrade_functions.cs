@@ -119,10 +119,7 @@ public class Upgrade_functions : MonoBehaviour
         int mod = Upgrade_script.Modifier(method_id, tier+1);
 
             int old_mod;
-            if(tier == 0)
-                old_mod  = 1;
-            else
-                old_mod = Upgrade_script.Modifier(method_id, tier);
+            old_mod = Upgrade_script.Modifier(method_id, tier);
 
             if(mod == -1 || mod == 0)
                 text += "";
