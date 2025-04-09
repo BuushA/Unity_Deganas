@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System;
 using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
+using System.Linq;
 
 public class Sell_options : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Sell_options : MonoBehaviour
     private Global_values GB_script;
     private Upgrades upgrade;
     private LabelMan Money_manager;
+    private customer_Panel Panel_script;
 
 
 
@@ -37,6 +39,8 @@ public class Sell_options : MonoBehaviour
     [SerializeField] int plus_score = 3;
 
     bool Quit = new();
+    private GameObject Panel;
+    [SerializeField] private GameObject[] Sell_buttons = new GameObject[3];
 
 
 
@@ -59,7 +63,7 @@ public class Sell_options : MonoBehaviour
         upgrade = Upgrades.reference;
     }
 
-    public void New_Customer(string name_ref, long amount_req, int SC, long curr, int id)
+    public void New_Customer(string name_ref, long amount_req, int SC, long curr, int id, customer_Panel script, GameObject reference)
     {
         //init labels;
         item_name = name_ref;
@@ -68,6 +72,8 @@ public class Sell_options : MonoBehaviour
         current_amount = curr;
         Quit = false;
         customer_id = id;
+        Panel_script = script;
+        Panel = reference;
 
         string upgName = "Quality";
         int quality_mod = upgrade.Modifier(upgrade.Dic_upgrades[upgName].method_id, upgrade.Dic_upgrades[upgName].tier);
@@ -113,13 +119,8 @@ public class Sell_options : MonoBehaviour
     {
         //Nothing to buy, so the customer quits
         if(Quit)
-        {
-            //Penalize the player
-            // for now instantly switches customers
-            //restart
-            Customers.Time_spent();
-            Customers.Start_buying();
-        }
+            end_selling();
+
         //sell product normally
         else
         {
@@ -131,10 +132,7 @@ public class Sell_options : MonoBehaviour
             //update cash
             Money_manager.update_money_label(2);
             //add a coroutine for animation later
-            
-            // for now instantly switches customers
-            Customers.Time_spent();
-            Customers.Start_buying();
+            end_selling();
         }
     }
 
@@ -142,13 +140,8 @@ public class Sell_options : MonoBehaviour
     {
         //Nothing to buy, so the customer quits
         if(Quit)
-        {
-            //Penalize the player
-            // for now instantly switches customers
-            //restart
-            Customers.Time_spent();
-            Customers.Start_buying();
-        }
+            end_selling();
+
         //sell product normally
         else
         {
@@ -157,14 +150,12 @@ public class Sell_options : MonoBehaviour
             GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
             MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
             //Lower score to the customer
-            Customers.Penalty(customer_id, minus_score);
+            int new_score = Customers.Penalty(customer_id, minus_score);
             //update cash
             Money_manager.update_money_label(2);
             //add a coroutine for animation later
-            
-            // for now instantly switches customers
-            Customers.Time_spent();
-            Customers.Start_buying();
+
+            StartCoroutine(close_Panel(new_score));
         }
     }
 
@@ -172,13 +163,8 @@ public class Sell_options : MonoBehaviour
     {
         //Nothing to buy, so the customer quits
         if(Quit)
-        {
-            //Penalize the player
-            // for now instantly switches customers
-            //restart
-            Customers.Time_spent();
-            Customers.Start_buying();
-        }
+            end_selling();
+
         //sell product normally
         else
         {
@@ -187,14 +173,38 @@ public class Sell_options : MonoBehaviour
             GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
             MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
             //add score to the customer
-            Customers.Grace(customer_id, plus_score);
+            int new_score = Customers.Grace(customer_id, plus_score);
             //update cash
             Money_manager.update_money_label(2);
             //add a coroutine for animation later
-            
-            // for now instantly switches customers
-            Customers.Time_spent();
-            Customers.Start_buying();
+            StartCoroutine(close_Panel(new_score));
         }
+    }
+
+    private void end_selling()
+    {
+        //Penalize the player
+        // for now instantly switches customers
+        //restart
+        GameObject.Destroy(Panel);
+        Customers.Time_spent();
+        Customers.forget_customer();
+        Customers.Start_buying();
+    }
+
+    IEnumerator close_Panel(int s)
+    {
+        Panel_script.updateScore(s);
+        //hide buttons
+        for(int i = 0; i < 3; i++)
+            Sell_buttons[i].SetActive(false);
+
+        yield return new WaitForSecondsRealtime(1);
+
+        //show buttons
+        for(int i = 0; i < 3; i++)
+            Sell_buttons[i].SetActive(true);
+
+        end_selling();
     }
 }
