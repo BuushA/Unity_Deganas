@@ -17,7 +17,6 @@ public class Chance_rng : MonoBehaviour
 
     public void strPlace_weights(int Total, Dictionary<string, int> T, out string Selected)
     {
-        //MonoBehaviour.print(Total);
         string result = "";
         int RTotal = rand.Next(0, Total-1);
         int s = 0;
@@ -31,6 +30,5 @@ public class Chance_rng : MonoBehaviour
             }
         }
         Selected = result;
-        //MonoBehaviour.print(Selected);
     }
 }

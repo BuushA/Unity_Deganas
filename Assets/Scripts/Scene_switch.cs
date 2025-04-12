@@ -43,7 +43,6 @@ public class Main_Scene_manager : MonoBehaviour
         Label_Manager = LabelMan.reference;
         Label_Manager.update_money_label(1);
         Label_Manager.update_time_label(1);
-        MonoBehaviour.print("ha");
         Operations.SetActive(false);
         upgrades = Upgrades.reference;
         TimeKey = upgrades.Dic_upgrades["Time"];
@@ -63,7 +62,7 @@ public class Main_Scene_manager : MonoBehaviour
 
     public void switch_to_scene()
     {
-        Debug.Log("Switch scene");
+        //Consider adding log here
         if(GB_script.Dic_item_amount.Count == 0)
         {
             active_message = true;
@@ -121,7 +120,6 @@ public class Main_Scene_manager : MonoBehaviour
     {
         Grid_Map_UI.SetActive(true);
         Managment_Internal_UI.SetActive(false);
-
     }
 
     public void Managment()
@@ -134,10 +132,8 @@ public class Main_Scene_manager : MonoBehaviour
         //activate gameplay when you buy your first gas station
         if(hasStation == false)
         {
-            MonoBehaviour.print(Grid.N_stations);
             if(Grid.N_stations > 0)
             {
-                MonoBehaviour.print("Activated");
                 hasStation = true;
                 Operations.SetActive(true);
             }

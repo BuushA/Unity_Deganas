@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
+using System.Reflection;
 
 public class Region_grid : MonoBehaviour
 {
@@ -38,7 +40,6 @@ public class Region_grid : MonoBehaviour
 
     public void Generate_map()
     {
-        Debug.Log("Grid is initialized");
         Customers.Create_customer_grid(this, Tile, House, Station, Owned_land);
         Station_cost();
     }
@@ -75,6 +76,8 @@ public class Region_grid : MonoBehaviour
             return;
         
         Global_values.money -= Global_values.Station_price;
+        GameLog.Message(MethodBase.GetCurrentMethod().Name + " : Price=" + $"{Global_values.Station_price} =>" + $" {Global_values.Station_price * increment_price}");
+         GameLog.Message(MethodBase.GetCurrentMethod().Name + " : Coordinates from Land_buy=" + $"{x}, " + $" {y}");
         Global_values.Station_price *= increment_price;
         LabelManager.update_money_label(1);
         Station_cost();

@@ -15,8 +15,8 @@ public class Upgrades : MonoBehaviour
 
     public static Upgrades reference;
     //dictionary of all the upgrades
-    //ADD UPGRADES THROUGH THE EDITOR
-    //IT WILL OVERIDE THEESE
+    //ADD UPGRADES THROUGH THE CODE EDITOR
+    //THE UNITY EDITOR WILL OVERIDE THEESE
     public List<string> upgrades = new List<string>{"Stockpile", "Quality", "Time", "Efficiency"};
     public class UP
     {
@@ -37,10 +37,8 @@ public class Upgrades : MonoBehaviour
     private void create_upgrades_dic()
     {
         int upgr_len = upgrades.Count;
-        MonoBehaviour.print(upgr_len);
         for(int i = 0 ; i < upgr_len; i++)
         {
-            MonoBehaviour.print(upgrades[i]);
             Dic_upgrades.Add(upgrades[i], new UP {tier = 0, method_id = i});
         }
     }

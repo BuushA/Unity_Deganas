@@ -42,7 +42,6 @@ public class Global_values : MonoBehaviour
     }
 
 
-
     //Could create a template function to create Dics
     public void create_price_dic(long[] unit_price)
     {
@@ -62,7 +61,6 @@ public class Global_values : MonoBehaviour
         }
     }
 
-
     public void add_amount_to_dic(string item_name, long amount)
     {   
         try
@@ -71,7 +69,6 @@ public class Global_values : MonoBehaviour
         }
         catch (KeyNotFoundException e)
         {
-            MonoBehaviour.print("Adding key");
             Dic_item_amount.Add(item_name, amount);
         }
     }

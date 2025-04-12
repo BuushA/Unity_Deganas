@@ -7,6 +7,7 @@ using System;
 using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
 using System.Linq;
+using System.Reflection;
 
 public class Sell_options : MonoBehaviour
 {
@@ -98,10 +99,13 @@ public class Sell_options : MonoBehaviour
         {
         
             int product_price = GB_script.Dic_item_sell[item_name];
-            price = (long)(sell_amount * product_price * (1 + score/10) * quality_mod);
+            price = sell_amount * product_price * quality_mod;
             long og_price = price;
 
-
+            //LOG about the customer
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + ": Customer: " + $"{customer_id}, " + item_name + $": {sell_amount}");
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + ": Product: " + $"1 unit={product_price}, " + $"total={price}");
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + ": Score: " + $"{score}");
 
             //pass the value to button_money to update the money;
             Neutral.text = Money_manager.Format_number(price);
@@ -111,7 +115,10 @@ public class Sell_options : MonoBehaviour
             //lower by 20%
             price = (long)(og_price * 0.8);
             Lower.text = Money_manager.Format_number(price) + "\n -20% / + " + plus_score.ToString() + " score";
+            price = og_price;
         }
+
+
     }
 
     //Time_spent() tracks the time and stops selling when it reaches the limit
@@ -125,9 +132,11 @@ public class Sell_options : MonoBehaviour
         else
         {
             Global_values.money += price; //+money
-            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
             GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
-            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
+
+
+            //SELL LOGS
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " Price: " + $"{price}");
         
             //update cash
             Money_manager.update_money_label(2);
@@ -146,11 +155,14 @@ public class Sell_options : MonoBehaviour
         else
         {
             Global_values.money += (long)(price * 1.2); //+money
-            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
             GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
-            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
             //Lower score to the customer
             int new_score = Customers.Penalty(customer_id, minus_score);
+
+            //SELL LOGS
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " Price: " + $"*1.2={price*1.2}" + $"normal={(price)}");
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " updated Score: " + $"{new_score}");
+
             //update cash
             Money_manager.update_money_label(2);
             //add a coroutine for animation later
@@ -169,11 +181,14 @@ public class Sell_options : MonoBehaviour
         else
         {
             Global_values.money += (long)(price*0.8); //+money
-            MonoBehaviour.print("Items before selling: " + $"{GB_script.Dic_item_amount[item_name]}");
             GB_script.add_amount_to_dic(item_name, (-1) * sell_amount); //-amount
-            MonoBehaviour.print("Items left: " + $"{GB_script.Dic_item_amount[item_name]}");
             //add score to the customer
             int new_score = Customers.Grace(customer_id, plus_score);
+
+            //SELL LOGS
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " Price: " + $"*0.8={price*0.8}" + $"normal={price}");
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " updated Score: " + $"{new_score}");
+
             //update cash
             Money_manager.update_money_label(2);
             //add a coroutine for animation later

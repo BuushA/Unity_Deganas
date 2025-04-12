@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Reflection;
 
 
 public class Upgrade_functions : MonoBehaviour
@@ -77,7 +78,12 @@ public class Upgrade_functions : MonoBehaviour
             //update labels and upgrade values
             Global_values.money -= buy_price;
             Upgrade_script.Dic_upgrades[upgrade_name].tier += 1; tier++;
+            //DEBUG LOGS:
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " " + upgrade_name + $"tier {Upgrade_script.Dic_upgrades[upgrade_name].tier}");
+            //PRICE IS 100 times bigger than normal
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " PREVIOUS "  + $"price {buy_price}");
             buy_price = Upgrade_script.priceMod(buy_price, upgrade_name);
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " NEW "  + $"price {buy_price}");
             Base_UI();
             MoneyManager.update_money_label(1);
             Upgrade_script.Modify(method_id, tier);

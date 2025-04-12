@@ -139,8 +139,6 @@ public class Panel_functions : MonoBehaviour
         
         if(Global_values.money < buy_price)
         {
-            Debug.Log("Not enough cash");
-
             if(active_message == false)
             {
                 active_message = true;
@@ -150,7 +148,6 @@ public class Panel_functions : MonoBehaviour
        
        else if(amount == 0)
        {
-            Debug.Log("Won't create an element with value 0");
 
             if(active_message == false)
             {
@@ -160,7 +157,6 @@ public class Panel_functions : MonoBehaviour
        }
        else if(amount + owned > max_amount)
        {
-            Debug.Log("Over the max amount");
 
             if(active_message == false)
             {

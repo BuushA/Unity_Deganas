@@ -13269,7 +13269,6 @@ MonoBehaviour:
   placeholder: {fileID: 1646220737}
   Stop: 0
   amount_req: 0
-  Client_number: 0
   type_1:
   - Young
   - Old
@@ -13282,7 +13281,7 @@ MonoBehaviour:
   - Alcoholic
   - Cheap
   - Spender
-  gen: 3
+  gen: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

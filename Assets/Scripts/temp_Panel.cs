@@ -12,9 +12,8 @@ public class temp_Panel : MonoBehaviour
 
     }
 
-
     public void close_panel()
     {
-        MonoBehaviour.print("Closing Panel");
+        return;
     }
 }

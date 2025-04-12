@@ -5,13 +5,11 @@ using System;
 using UnityEngine.UI;
 
 using TMPro;
+using System.Reflection;
 
 
 public class LabelMan : MonoBehaviour
 {
-
-
-
     //References to labels that are global
     [SerializeField] TMP_Text Cash_label_1;
     [SerializeField] TMP_Text Cash_label_2;
@@ -35,21 +33,22 @@ public class LabelMan : MonoBehaviour
     {
         label.text = text;
     }
+
     //call to update scenes money label
     public void update_money_label(int Part)
     {
         string str_money;
         str_money = Format_number(Global_values.money);
+        GameLog.Message( $"{MethodBase.GetCurrentMethod().Name}:" + " turning " + $"{Global_values.money}" + " => " + str_money);
         if(Part == 1)
             Cash_label_1.text = str_money + " $";
         else if(Part == 2)
-            Cash_label_2.text = str_money + " $";  
+            Cash_label_2.text = str_money + " $";
     }
 
     //call to update scenes time label
     public void update_time_label(int Part)
     {
-        MonoBehaviour.print(Global_values.time);
         //time label
         int h = Global_values.time % 24;
         int d = Global_values.time / 24;
@@ -58,11 +57,13 @@ public class LabelMan : MonoBehaviour
             day_and_hours = h.ToString() + " h";
         else
            day_and_hours = d.ToString() + " d " + h.ToString() + " h";
+        
+        GameLog.Message( $"{MethodBase.GetCurrentMethod().Name}:" + " converting " + $"{d} days + " + $"{h} hours" + " => " + day_and_hours);
 
-    if(Part == 1)
-        Time_label_1.text = day_and_hours;
-    else if (Part == 2)
-        Time_label_2.text = day_and_hours; 
+        if(Part == 1)
+            Time_label_1.text = day_and_hours;
+        else if (Part == 2)
+            Time_label_2.text = day_and_hours; 
     }
 
     public string Format_number(long number)
@@ -83,7 +84,6 @@ public class LabelMan : MonoBehaviour
         if((number).ToString().Length<2){
             k=(number).ToString().Length;
         }
-       
       return (p+","+(number).ToString().Substring(m,k)+" " +trump[n]);
     }
 
@@ -92,6 +92,8 @@ public class LabelMan : MonoBehaviour
     {
         //Panel labels
         Panel_functions[] Panel = GameObject.FindObjectsOfType<Panel_functions>(true);
+        if(Panel.Length == 0)
+            GameLog.Warning($"{MethodBase.GetCurrentMethod().Name}" + "returned to panels");
         foreach(Panel_functions pan in Panel)
         {
             pan.update_labels();

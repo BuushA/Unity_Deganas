@@ -12,6 +12,7 @@ using System.Security;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 
 public class customer_script : MonoBehaviour
@@ -121,23 +122,15 @@ public class customer_script : MonoBehaviour
     List<Customer> person_list = new List<Customer>(101);
     List<Customer> Client_list = new List<Customer>(48);
 
-    void print_array(List<Customer> T, int n)
+    void Log_client_gen(int id, Customer a)
     {
-        Debug.Log("printing an Array");
-        for(int i = 0; i < n; i++)
-        {
-            Debug.Log($"{i+1}: ");
-            Debug.Log(T[i].score.ToString() + " score");
-        }
-
-        Debug.Log("---Array printed---");
+        GameLog.Message("GEN: " + "ID=" + $"{id}; " + "POS=" + $"{a.x}, " + $"{a.y}; " + "SCORE=" + $"{a.score}; " + "ITEM=" + Global_values.Items[a.item_id] 
+        + "; " + "AMOUNT=" + $"{a.buy_amount}" + "TYPES: " + $"{type_1[a.type1]}, " +  $"{type_2[a.type2]}, " + $"{type_3[a.type3]}; ");
     }
-
 
    public void Scene_init()
     {
         int start_bonus = 0;
-        //Debug.Log("Initializing the scene");
         Stop = false;
         maxed = false;
         
@@ -147,7 +140,9 @@ public class customer_script : MonoBehaviour
         Generate_clients(gen + start_bonus);
         //make a copy of an array;
         person_max = Client_number;
+
         //unoptimized
+        person_list = new List<Customer>(101);
         //person_list = (Customer[]) Client_list.Clone(); I hate c# for creating this. Shallow copy my ass
         for(int i = 0; i < Client_list.Count; i++)
         {
@@ -155,85 +150,54 @@ public class customer_script : MonoBehaviour
             item_id = Client_list[i].item_id, buy_amount = Client_list[i].buy_amount, score = Client_list[i].score, visits = Client_list[i].visits});
         }
 
-        print_array(person_list, person_max);
+        if(Client_list.Count != Client_number)
+            GameLog.Error(MethodBase.GetCurrentMethod().Name + ": Wrong Client count");
+        if(person_list.Count != Client_number)
+            GameLog.Error(MethodBase.GetCurrentMethod().Name + ": Wrong copied Client count");
+
         count = 0;
         _worked_hours = 0;
         Start_buying();
     }
 
+
     public void Generate_clients(int n)
     {
-        Debug.Log("Started Generation");
         int x_cord, y_cord = new();
+        int last_number = Client_number;
+        //used for some functions which need a specific amount
+        int gen_amount = new();
 
-        if(Client_number + n >= max_clients)
+        //Choose the right parameters
+        if(Client_number == max_clients)
+            return;
+        else if(Client_number + n >= max_clients)
         {
-             MonoBehaviour.print("Too many clients!");
-             //Array index
-            if(maxed == false)
-            {
-                for(int i = Client_number; i < max_clients; i++)
-                {   
-                    //add random coordinates to client
-                    get_coordinates(out x_cord, out y_cord, max_clients - Client_number); //potentially add a chance
-                    //buffer variable
-                    Customer a = new Customer();
-                    a.x = x_cord; a.y = y_cord;
-                    //Get the competitive score based on distance
-                    //needs coordinates beforehand
-                    //Client_list[i].score = Get_Score(i);
-                    a.score = Get_Score(i);
-                    //add random types to Client
-                    int Tlen = type_1.Length; //Client_list[i].type1 = rand.Next(0, Tlen);
-                    a.type1 = rand.Next(0, Tlen);
-                    Tlen = type_2.Length; //Client_list[i].type2 = rand.Next(0, Tlen);
-                    a.type2 = rand.Next(0, Tlen);
-                    Tlen = type_3.Length; //Client_list[i].type3 = rand.Next(0, Tlen);
-                    a.type3 = rand.Next(0, Tlen);
-
-                    //Make it compatible with multible items in the future
-                    int ItemID = 0; long BuyAmount = 0;
-                    //add random item and buy amount
-                    Products(out ItemID, out BuyAmount);
-                    a.item_id = ItemID;
-                    a.buy_amount = BuyAmount;
-                    /*
-                    Client_list[i].item_id = ItemID;
-                    Client_list[i].buy_amount = BuyAmount;
-                    */
-
-                    //Get the competitive score based on distance
-                    //The closer it is to max the more modifier % it adds to everything
-                    Client_list[i] = a;
-                    }
-                    maxed = true;
-                    Client_number = max_clients;
-            }
+            Client_number = max_clients;
+            gen_amount = max_clients - Client_number;
         }
-        
-        if (Client_number < max_clients) {
-        //!!!!Implement CHANCE later on!!!!
-        Debug.Log("adding new clients: HERE");
-        for(int i = Client_number; i < Client_number + n; i++)
+        else
         {
-            Debug.Log("New Client No. " + $"{i}");
-            //multiplies money; adds chance to  sell options; lowers time taken in the store
+            Client_number += n;
+            gen_amount = n;
+        }
 
+        for(int i = last_number; i < Client_number; i++)
+        {
+            //multiplies money; adds chance to  sell options; lowers time taken in the store
             //add random coordinates to client
-                get_coordinates(out x_cord, out y_cord, n); //potentially add a chance
-                Debug.Log("Got Coordinates");
+                get_coordinates(out x_cord, out y_cord, gen_amount); //potentially add a chance
                 Customer a = new Customer();
                 occupied[x_cord, y_cord] = true;
 
                 a.x = x_cord; a.y = y_cord;
 
-               //First element in a list must be added with a function
-               Client_list.Add(a);
+            //First element in a list must be added with a function
+            Client_list.Add(a);
             //Get the competitive score based on distance
             //needs coordinates beforehand
 
             a.score = Get_Score(i);
-            Debug.Log("Got Score");
 
             //add random types to Client
             int Tlen = type_1.Length; 
@@ -247,18 +211,15 @@ public class customer_script : MonoBehaviour
             int ItemID = 0; long BuyAmount = 0;
             //add random item and buy amount
             Products(out ItemID, out BuyAmount);
-            Debug.Log("Got Products");
 
             a.item_id = ItemID;
             a.buy_amount = BuyAmount;
+            //update the current value with all the data
             Client_list[i] = a;
+            //Log client Generation:
+            Log_client_gen(i, Client_list[i]);
             }
-            //how many clients
-            //Stop incrementing after max_clients
-            Client_number += n;
         }
-        Debug.Log("Ended Client Generation");
-    }
 
     private void Products(out int It_id, out long amount)
     {
@@ -285,10 +246,8 @@ public class customer_script : MonoBehaviour
             else S = S.Remove(3);
             //new max_amount
             max_amount = max_amount - (max_amount * Int32.Parse(S)/ 100);
-            MonoBehaviour.print($"{max_amount}" + " to buy" + $"{item_name}");
 
             amount = rand.Next(1, max_amount);
-            MonoBehaviour.print("BOUGHt" + $"{amount}");
     }
 
     private void get_coordinates(out int x_cord, out int y_cord, int n)
@@ -308,7 +267,6 @@ public class customer_script : MonoBehaviour
                     {
                         x_cord = z;
                         y_cord = u;
-                        Debug.Log($"{z}" + "," + $"{u}");
                         return;
                     }
                 }
@@ -326,12 +284,8 @@ public class customer_script : MonoBehaviour
     int CNo = new();
     public void Start_buying()
     {
-        Debug.Log("Started buying");
-
         Customer person = new();
         long current_amount = new();
-        //Client_debug();
-        //MonoBehaviour.print(Client_number);
 
          if(person_max == 0)
         {
@@ -355,6 +309,7 @@ public class customer_script : MonoBehaviour
             }
             count++;
 
+
         if(Stop == false)
         {
             string request = "Buying " + person.buy_amount + "\n" + item_name;
@@ -367,9 +322,6 @@ public class customer_script : MonoBehaviour
             //handles the button labels aswell
             
             Button_options.New_Customer(item_name, person.buy_amount, person.score, current_amount, CNo, client_Panel, Cpanel);
-            print_array(Client_list, person_max);
-            print_array(person_list, person_max);
-
             if(Client_list[CNo].visits % 3 == 2)
                 ValueRegen(CNo);
             else
@@ -380,9 +332,6 @@ public class customer_script : MonoBehaviour
                 Client_list[CNo] = a;
             }
                 
-            
-            //;
-            //StartCoroutine(clearClient(Cpanel));
         }
         
 
@@ -399,6 +348,7 @@ public class customer_script : MonoBehaviour
     //Prevents data races and other problems
     public void forget_customer()
     {
+            Log_client_gen(CNo, person_list[CNo]);
             for(int i = CNo; i < person_max - 1; i++)
             {
                 Customer next = person_list[i+1];
@@ -406,13 +356,14 @@ public class customer_script : MonoBehaviour
                 person_list[i+1] = curr;
                 person_list[i] = next;
             }
+            GameLog.Message(MethodBase.GetCurrentMethod().Name + " AFTER");
+            Log_client_gen(CNo, person_list[CNo]);
             person_max--;
     }
 
     public void Switch_to_managment()
     {
         Scene_manager.Revert_scenes();
-        MonoBehaviour.print("Over");
     }
 
 
@@ -420,9 +371,7 @@ public class customer_script : MonoBehaviour
     {
         //check if the time doesn't go over the limit
         int time_taken = upgrades.Modifier(EfficiencyKey.method_id, EfficiencyKey.tier);
-        Debug.Log(time_taken);
         _worked_hours += time_taken;
-        MonoBehaviour.print("time spent == " + $"{_worked_hours}");
         Global_values.time += time_taken;
         Money_manager.update_time_label(2);
 
@@ -453,7 +402,9 @@ public class customer_script : MonoBehaviour
             a.score = 0;
             b.score = 0;
         }
-        
+
+        GameLog.Message(MethodBase.GetCurrentMethod().Name + " 1) " + $"{a.score}; " + "2) " + $"{b.score}");
+
         Client_list[id] = a;
         person_list[id] = b;
 
@@ -478,6 +429,8 @@ public class customer_script : MonoBehaviour
             b.score += plus;
         }
 
+        GameLog.Message(MethodBase.GetCurrentMethod().Name + " 1) " + $"{a.score}; " + "2) " + $"{b.score}");
+
         Client_list[id] = a;
         person_list[id] = b;
     
@@ -487,7 +440,6 @@ public class customer_script : MonoBehaviour
 
     private void ValueRegen(int id)
     {
-        //MonoBehaviour.print("Visited - " + $"{Client_list[id].visits}");
         //refresh item and buy amount
         int ItemId = 0; long BuyAmount = 0;
         Products(out ItemId, out BuyAmount);
@@ -495,6 +447,10 @@ public class customer_script : MonoBehaviour
         a.item_id = ItemId;
         a.buy_amount = BuyAmount;
         Client_list[id] = a;
+
+        //Log customer updates
+        GameLog.Message("Regenerating customer: ");
+        Log_client_gen(id, Client_list[id]);
     }
 
 
@@ -504,30 +460,23 @@ public class customer_script : MonoBehaviour
             return ClientID;
 
         // get the distance to the nearest station
-        MonoBehaviour.print("Score of client - " + $"{ClientID}");
-
 
         int biggest = 0;
         int Cl_x = Client_list[ClientID].x;
         int Cl_y = y_max-1 - Client_list[ClientID].y; //reverse it
-        MonoBehaviour.print("PASS: " + $"{Client_list[ClientID]}");
         int distance = 0;
         for(int i = 0; i < Grid.N_stations; i++)
         {
             int S_x = Grid.Stations_x[i];
             int S_y = Grid.Stations_y[i];
 
-            MonoBehaviour.print("Measuring distance from: " + $"{Cl_x}, " + $"{Cl_y}"  + " to " + $"{S_x}, " + $"{S_y}");
-
             distance = Math.Abs(S_x - Cl_x) + Math.Abs(S_y - Cl_y);
-
-            //MonoBehaviour.print("Distance is: " + $"{distance}");
 
             if(distance > biggest)
                 biggest = distance;
 
         }
-        //MonoBehaviour.print("smallest dist: " + $"{smallest}");
+        
         //calculate the score based on the distance;
         //Make the calculation automatic and flexible 
         int score = (int)(biggest*2);
@@ -545,9 +494,6 @@ public class customer_script : MonoBehaviour
         int[,] Land_Taken = new int[15, 15];
 
         Hover_display Tooltip;
-
-
-
 
         for(int i = 0; i < Client_number; i++)
         {
