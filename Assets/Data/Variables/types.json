@@ -1,0 +1,15 @@
+    {
+        
+        "items": 
+        [
+            {
+                "name": "Alkoholikas",
+                "bonus": 10
+            },
+            {
+                "name": "Kidas",
+                "bonus": 20
+            }
+        ]
+    }
+

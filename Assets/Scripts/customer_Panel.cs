@@ -14,15 +14,15 @@ public class customer_Panel : MonoBehaviour
     string MemT1 = ""; string MemT2 = ""; string MemT3; string Memvisit = "";
 
     //replace types with string names
-    public void update_labels(int score, int type1, int type2, int type3, int visits)
+    public void update_labels(int score, string type1, string type2, string type3, int visits)
     {
         string text = "";
         text += "score: " + score.ToString() + "\n";
-        MemT1 = type1.ToString();
-        MemT2 = type2.ToString();
-        MemT3 = type3.ToString();
+        MemT1 = type1;
+        MemT2 = type2;
+        MemT3 = type3;
         text += MemT1 + "\n" + MemT2 + "\n" + MemT3 + "\n";
-        Memvisit = visits.ToString();
+        Memvisit = "Visited: " + visits.ToString();
         text += Memvisit;
         tooltip.text = text;
     }

@@ -9,7 +9,6 @@ public class temp_Panel : MonoBehaviour
     void awake()
     {
         Panel = this.gameObject;
-
     }
 
     public void close_panel()

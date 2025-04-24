@@ -77,6 +77,12 @@ public class customer_script : MonoBehaviour
     const int work_hours = 12;
     int _worked_hours = 0;
 
+    [System.Serializable]
+    public class Customer_types
+    {
+        public string name;
+        public int bonus;
+    }
 
     //Weighted values;
     Dictionary<string, int> T = new Dictionary<string, int>();
@@ -97,6 +103,8 @@ public class customer_script : MonoBehaviour
     //Temporary values for now
 
 
+
+
     // Start is called before the first frame update
     void Start()
     {   
@@ -110,6 +118,11 @@ public class customer_script : MonoBehaviour
         
         Button_options.InitGlobal();
         EfficiencyKey = upgrades.Dic_upgrades["Efficiency"];
+        //Init data from a json file
+
+        string type_data = JSON_operations.Read_file("types.json");
+        List<Customer_types> tempor = JSON_operations.From<Customer_types>(type_data);
+        GameLog.Message("JSON got: " + $"{tempor.Count}");
         //start buying start after pressing the scene button
     }
     
@@ -317,7 +330,8 @@ public class customer_script : MonoBehaviour
 
             GameObject Cpanel = Instantiate(ClientPrefab, placeholder.transform) as GameObject;
             client_Panel = Cpanel.GetComponent<customer_Panel>();
-            client_Panel.update_labels(person.score, person.type1, person.type2, person.type3, person.visits);
+            //Add type effects info here
+            client_Panel.update_labels(person.score, type_1[person.type1], type_2[person.type2], type_3[person.type3], person.visits);
             //button_option handles the prices and other modifiers (types, score, etc.)
             //handles the button labels aswell
             
