@@ -1,0 +1,59 @@
+{
+"items":
+[
+	{
+		"name": "beggers feast",
+		"types": ["Poor"],
+		"Products": ["Snacks"],
+		"bonus": 10,
+		"tier": 5
+	},
+	{
+		"name": "party night",
+		"types": ["Young", "Kid", "Alkoholic"],
+		"Products": ["Snacks"],
+		"bonus": 30,
+		"tier": 1
+
+	},
+	{
+		"name": "local festival",
+		"types": ["Milionaire", "Young"],
+		"Products": ["Snacks", "Gasolline"],
+		"bonus": 60,
+		"tier": 3
+
+	},
+	{
+		"name": "biker season",
+		"types": ["Trucker"],
+		"Products": ["Gasolline"],
+		"bonus": 50,
+		"tier": 4
+	},
+	{
+		"name": "Hotdog advert",
+		"types": ["Kid", "Trucker", "Young", "Poor"],
+		"bonus": 2,
+		"tier": 1
+	},
+	{
+		"name": "festival sponsor",
+		"types": ["Young", "Spender", "Old"],
+		"bonus": 5,
+		"tier": 3
+	},
+	{
+		"name": "Sale",
+		"types": ["Cheap", "Spender", "Old", "Young", "Kid"],
+		"bonus": 5,
+		"tier": 2
+	},
+	{
+		"name": "Convention stop",
+		"types": ["Milionaire", "Old", "Spender"],
+		"bonus": 3,
+		"tier": 4
+	}
+]
+}

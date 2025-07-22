@@ -1,0 +1,34 @@
+{
+"items":
+[
+	{
+		"name": "Hotdog advert",
+		"types": ["Kid", "Trucker", "Young", "Poor"],
+		"bonus": 2,
+		"tier": 1
+
+	},
+	{
+		"name": "festival sponsor",
+		"types": ["Young", "Spender", "Old"],
+		"bonus": 5,
+		"tier": 3
+
+	},
+	{
+		"name": "Sale",
+		"types": ["Cheap", "Spender", "Old", "Young", "Kid"],
+		"bonus": 5,
+		"tier": 2
+
+	},
+	{
+		"name": "Convention stop",
+		"types": ["Milionaire", "Old", "Spender"],
+		"bonus": 3,
+		"tier": 4
+
+	}
+]
+}
+

@@ -1,0 +1,51 @@
+    {
+        
+        "items": 
+        [
+            {
+                "name": "Alkoholic",
+                "bonus": 10,
+		"id_type": 1
+            },
+            {
+                "name": "Cheap",
+                "bonus": 20,
+		"id_type": 1
+            },
+            {
+                "name": "Spender",
+                "bonus": 10,
+		"id_type": 1
+            },
+            {
+                "name": "Trucker",
+                "bonus": 10,
+		"id_type": 2
+            },
+            {
+                "name": "Poor",
+                "bonus": 10,
+		"id_type": 2
+            },
+            {
+                "name": "Milionaire",
+                "bonus": 10,
+		"id_type": 2
+	    },
+	    {
+		"name": "Young",
+		"bonus": 10,
+		"id_type": 3
+	    },
+            {
+                "name": "Old",
+                "bonus": 10,
+		"id_type": 3
+            },
+            {
+                "name": "Kid",
+                "bonus": 10,
+		"id_type": 3
+            }
+        ]
+    }

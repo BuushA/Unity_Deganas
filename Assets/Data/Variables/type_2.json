@@ -1,0 +1,21 @@
+{
+	"Type_2":
+	[
+	
+            {
+                "name": "Trucker",
+                "bonus": 10,
+		"id_type": 2
+            },
+            {
+                "name": "Poor",
+                "bonus": 10,
+		"id_type": 2
+            },
+            {
+                "name": "Milionaire",
+                "bonus": 10,
+		"id_type": 2
+	    }
+	]
+}

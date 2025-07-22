@@ -1,0 +1,20 @@
+{
+	"items":
+	[
+		{
+			"name": "Gasolline",
+			"SellPrice": 600,
+			"BuyPrice": 500
+		},
+		{
+			"name": "Snacks",
+			"SellPrice": 300,
+			"BuyPrice": 250
+		}
+	]
+
+
+
+
+
+}

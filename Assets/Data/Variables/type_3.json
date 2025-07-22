@@ -1,0 +1,20 @@
+{
+	"Type_3":
+	[	
+	    {
+		"name": "Young",
+		"bonus": 10,
+		"id_type": 3
+	    },
+            {
+                "name": "Old",
+                "bonus": 10,
+		"id_type": 3
+            },
+            {
+                "name": "Kid",
+                "bonus": 10,
+		"id_type": 3
+            }
+	]
+}

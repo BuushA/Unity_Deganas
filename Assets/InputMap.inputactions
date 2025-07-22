@@ -1,0 +1,46 @@
+{
+    "name": "InputMap",
+    "maps": [
+        {
+            "name": "Server",
+            "id": "0d667781-d5e5-48b5-88c8-98da570ed6a5",
+            "actions": [
+                {
+                    "name": "JoinAsServer",
+                    "type": "Button",
+                    "id": "c42fb510-e85d-42fa-8329-db84e15f19e8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "111b3cd6-17a7-4b3d-9aea-6b71592b1d43",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Default",
+                    "action": "JoinAsServer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Default",
+            "bindingGroup": "Default",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

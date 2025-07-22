@@ -1,84 +1,118 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System;
 
 using TMPro;
+using System.Runtime.Versioning;
 
 public class Panel_functions : MonoBehaviour
 {
 
-
-   
-
     //dependencies for script
     [SerializeField] string item_name;
     [SerializeField] Global_values GB_script;
-    public button_money Money_manager;
+    [SerializeField] private LabelMan Money_manager; //stupid unity bug - cant get reference because it returns null
+    private Upgrades Upgrades_script;
+    
 
     //labels - UI
     [SerializeField] private TMP_Text Tunit_price; //price displayed under selling item
     [SerializeField] private TMP_Text Tbuy_price;  //display calculated price
     public TMP_InputField InBuy_amount; //get amount input
+    [SerializeField] TMP_Text Tunit_amount; //display how much of this unit you currently have
+    [SerializeField] TMP_Text Tmax_amount; //for displaying max amount
 
 
     //variables both public and private;
-  
     [HideInInspector]
     public long buy_price;
 
     //set price
     private long item_price;
-    private long current_money;
-    private int amount;
+    private long amount;
+    private long max_amount;
+    private int mod; //amount modifier
+    long owned;
+
+    NetworkServer netServer;
+    //set the tag
+    //tags will be used to update all labels
+    void Awake()
+    {   
+        //gameObject.tag = "Product_Panel";
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        //Change label prices
-        //try uses system
-        try{ 
-            item_price = GB_script.Dic_item_price[item_name]*100;
-            Tunit_price.text = (item_price).ToString() + "$";
-        }
-        catch(NullReferenceException e)
-        {
-            Debug.Log("Tunit_price was not set");
-        }
-        
+        Upgrades_script = Upgrades.reference;
+        GB_script = Global_values.reference;
+        netServer = NetworkServer.reference;
+        update_labels();
     }
 
+    public void update_labels()
+    {
+        GameLog.Message($"{Money_manager}");
+        string text;
+        //price of the item might decrease or increase
+        item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
+        text = Money_manager.Format_number(item_price) + " $";
+        max_amount = Global_values.stockAmount;
+        Money_manager.to_label(Tunit_price, text);
+        //amount of items switches between scenes
+        
+        //mod = Upgrades_script.storageMod(Upgrades_script.Dic_upgrades["Stockpile"].tier);
+
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+        {
+            text = Money_manager.Format_amount(item_name) + "/" + max_amount.ToString();
+        }
+        else
+            text = "0" + "/" + max_amount.ToString();
+
+
+        Money_manager.to_label(Tunit_amount, text);
+    }
 
     //display and calculate the price
     public void New_amount(string M)
     {
-        
-
         //get the value from input
         //M is always a number;
         M = InBuy_amount.text;
+        max_amount = Global_values.stockAmount;
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
 
         try {
-            amount = int.Parse(M);
-        }
+            amount = long.Parse(M);
 
-        //Checks for errors
-        //Implement more variaty and Price reset
+
+
+            if(amount >= 0  && amount + owned <= max_amount)
+            {
+            buy_price = amount * item_price; 
+
+            //TMP_Text, string-> updates the label
+            Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
+            }
+        }
         catch (FormatException e)
         {
-            Debug.Log($"Unable to parse '{M}'");
-            
+            //Checks for errors
+            //Implement more variaty and Price reset
+            Debug.Log($"Unable to parse '{M}'"); 
         }
         catch (OverflowException e)
         {
-            Debug.Log("This nubmer cannot fith in an Int32");
-        }
-        
-        //stop overflow and negative values
-        if(amount < 100000 &&amount > 0)
-        {
-        buy_price = amount * item_price;
-        Tbuy_price.text = (buy_price).ToString() + "$";
+            Debug.Log("This nubmer cannot fit in an Int32");
         }
 
     }
@@ -99,31 +133,64 @@ public class Panel_functions : MonoBehaviour
 
     public void Buy_item()
     {
-        current_money = Global_values.money;
+        max_amount = Global_values.stockAmount;
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
         
-        if(current_money < buy_price)
+        if(Global_values.money < buy_price)
         {
-            Debug.Log("Not enough cash");
-
             if(active_message == false)
             {
                 active_message = true;
                 StartCoroutine(label_message(1.5f, "Not enough cash"));
-                
             }
-                
         }
+       
+       else if(amount == 0)
+       {
+
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1.5f, "Can't buy dust"));
+            }
+       }
+       else if(amount + owned > max_amount)
+       {
+
+            if(active_message == false)
+            {
+                active_message = true;
+                StartCoroutine(label_message(1.5f, "Too many products"));
+            }
+       }
         else
         {
             Global_values.money -= buy_price;
             GB_script.add_amount_to_dic(item_name, amount);
-            try {
-                Money_manager.update_money_label();
-            }
-            catch (NullReferenceException e)
-            {
-                Debug.Log("Money manager is not set");
-            }
+            Money_manager.update_money_label(1);
+            //Update only the amount
+            update_labels();
         }
+    }
+
+    public void max_possible()
+    {
+        max_amount = Global_values.stockAmount;
+        amount = Global_values.money /  GB_script.Dic_item_price[item_name];
+
+        if(GB_script.Dic_item_amount.ContainsKey(item_name))
+            owned = GB_script.Dic_item_amount[item_name];
+        else owned = 0;
+
+
+        if(amount + owned > max_amount)
+            amount = max_amount - owned;
+        
+
+        buy_price = amount * item_price;
+
+        Money_manager.to_label(Tbuy_price, Money_manager.Format_number(buy_price) + " $");
     }
 }

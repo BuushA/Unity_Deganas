@@ -1,0 +1,18 @@
+{
+	"Type_1":
+	[
+            {
+                "name": "Alkoholic",
+                "bonus": 10
+            },
+            {
+                "name": "Cheap",
+                "bonus": 20
+            },
+            {
+                "name": "Spender",
+                "bonus": 10
+            }
+	]
+
+}
