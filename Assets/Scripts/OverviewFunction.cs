@@ -47,7 +47,7 @@ public class OverviewFunction : MonoBehaviour
 
     private long GetStockPrice()
     {
-        float procentage = 0.10f;
+        float procentage = 0.25f;
         long Property = Global_values.Starting_station_price;
         long Profits = GB_script.ShortTermProfit + (long)(GB_script.AllProfit * procentage);
         return (Property + Profits);
@@ -57,7 +57,7 @@ public class OverviewFunction : MonoBehaviour
     {
         string info = "";
         netServer.requestGetOpponentStockRpc(Global_values.localID);
-        long StockPrice = GB_script.OpponentStock;
+        long StockPrice = Global_values.OpponentStock;
         info += "25% Opponents Degan:\n" + MoneyManager.Format_number(StockPrice);
         StockInfo.text = info;
     }

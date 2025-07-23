@@ -117,7 +117,12 @@ public class NetworkServer : NetworkBehaviour
             if (i != ClientId) { OpponentsID = i; }
         }
 
-        float procentage = 0.10f;
+        for (int i = 0; i < player_count; i++)
+        {
+            GameLog.Message($"All={AllProfit[i]} ; Short={ShortTermProfit[i]}");
+        }
+
+        float procentage = 0.25f;
         long Property = Global_values.Starting_station_price;
         long Profits = ShortTermProfit[OpponentsID - 1] + (long)(AllProfit[OpponentsID - 1] * procentage);
 
@@ -216,14 +221,16 @@ public class NetworkServer : NetworkBehaviour
         GameLog.Message("Reseting Profit");
     }
 
+    //Standardize with clients
+    //Recheck if turn add should be after or before
     [Rpc(SendTo.Server)]
     public void UpdateTurnsRpc()
     {
-        Global_values.turns += 1;
-        if (Global_values.turns % Global_values.TurnReset == 1)
+        if (Global_values.turns > 1 && (Global_values.turns % Global_values.TurnReset == 1))
         {
             OnTurnReset();
         }
+        Global_values.turns += 1;
     }
 
     private void OnTurnReset()
@@ -235,13 +242,10 @@ public class NetworkServer : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     private void GetOpponentStockPriceRpc(long Property, long Profits, RpcParams rpcParams)
     {
-        for (int i = 0; i < player_count; i++)
-        {
-            GameLog.Message($"All={AllProfit[i]} ; Short={ShortTermProfit[i]}");
-        }
 
-        GB_script.OpponentStock = Property + Profits;
-        GameLog.Message($"Opponents stock is worth {GB_script.OpponentStock}");
+        Global_values.OpponentStock = Property + Profits;
+        GameLog.Message($"{rpcParams}");
+        GameLog.Message($"Opponents stock is worth {Global_values.OpponentStock}");
     }
 
     [Rpc(SendTo.Server)]

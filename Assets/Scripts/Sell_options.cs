@@ -143,6 +143,8 @@ public class Sell_options : MonoBehaviour
             GB_script.AllProfit += profit;
             GB_script.ShortTermProfit += profit;
             netServer.UpdateProfitRpc(Global_values.localID, profit);
+            netServer.requestGetOpponentStockRpc(Global_values.localID);
+            GameLog.Message($"Opponent Stock F-15 {Global_values.OpponentStock}");
             if (price_modifier == (int)SellMods.increase)
             {
                 int new_score = Customers.Penalty(customer_id, plus_score);

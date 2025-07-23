@@ -44,7 +44,7 @@ public class Global_values : MonoBehaviour
     public long ShortTermProfit = 0;
 
     public static int localID;
-    public long OpponentStock = 0;
+    public static long OpponentStock = 0;
 
     private NetworkServer netServer;
 
