@@ -18,6 +18,7 @@ public class Main_Scene_Manager : MonoBehaviour
     private LabelMan Label_Manager;
     private Upgrades upgrades;
     [SerializeField] OverviewFunction StockFunction;
+    [SerializeField] TemporaryTypeBonus typesPanel;
 
     //UI objects
     [SerializeField] GameObject Work_UI;
@@ -80,38 +81,13 @@ public class Main_Scene_Manager : MonoBehaviour
             active_message = true;
             StartCoroutine(label_message(1.5f, "Stock UP!!!"));
         }
-//        else if(netServer.canStart == false)
-//        {
-//            active_message = true;
-//
-//            int player_id = Global_values.localID;
-//            netServer.requestJoinedToServer(player_id);
-//            string text = Label_Manager.LabelReadyCount();
-//            StartCoroutine(label_message(1f, text));
-//        }
-        //has items bought
         else
         {
-            //    //change the time to opening hours
-            //    int current_time = Global_values.time % 24;
-            //    int add_time = 0;
-            //    int opening = upgrades.Modifier(TimeKey.method_id, TimeKey.tier);
-            //    if (current_time > opening)
-            //    {
-            //        add_time = 24 + opening - current_time;
-            //    }
-            //    else if (current_time < opening)
-            //    {
-            //        add_time = opening - current_time;
-            //    }
-            //    Global_values.time += add_time;
 
             active_message = true;
 
-            int player_id = Global_values.localID;
-            netServer.requestJoinedToServer(player_id, (int)NetworkServer.Scenes.Work);
-            string text = Label_Manager.LabelReadyCount();
-            StartCoroutine(label_message(1f, text));
+            //StartCoroutine(label_message(1f, "COWBOY READY"));
+            netServer.requestJoinedToServer((int)NetworkServer.Scenes.Work, (int)LabelMan.ReadyLabels.Work);
         }
     }
 
@@ -148,6 +124,7 @@ public class Main_Scene_Manager : MonoBehaviour
         Label_Manager.update_money_label((int)Global_values.Gamephase.Managment);
         Label_Manager.update_time_label((int)Global_values.Gamephase.Managment);
         Label_Manager.update_turn_label((int)Global_values.Gamephase.Managment);
+        Label_Manager.UpdateReadyLabel((int)LabelMan.ReadyLabels.Work, netServer.ReadyCount, NetworkServer.player_count);
         //Turns are added only after starting a working session
         //Panel labels
         Label_Manager.update_Panels();
@@ -189,10 +166,24 @@ public class Main_Scene_Manager : MonoBehaviour
             Work_UI.SetActive(false);
             StockFunction.SceneInit();
         }
-        else if (Global_values.turns > 1 && (Global_values.turns % Global_values.TurnReset) == 1)
-        {
-            GB_script.ShortTermProfit = 0;
-        }
+    }
+
+
+
+    public void ResumeWork()
+    {
+        active_message = true;
+        netServer.requestJoinedToServer((int)NetworkServer.Scenes.ExitOverview, (int)LabelMan.ReadyLabels.ExitOverview);
+        StartCoroutine(label_message(1f, "COWBOY READY"));
+    }
+
+    public void CloseOverview()
+    {
+        Overview.SetActive(false);
+        Work_UI.SetActive(true);
+        netServer.OnTurnReset();
+        GB_script.ShortTermProfit = 0;
+        typesPanel.RestoreAndUpdateButtons();
     }
 
 }

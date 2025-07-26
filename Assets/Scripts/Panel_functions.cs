@@ -60,10 +60,11 @@ public class Panel_functions : MonoBehaviour
         string text;
         //price of the item might decrease or increase
         item_price = GB_script.Dic_item_price[item_name]; //*100 nereikia (Prod_prices jau yra tiksli kaina);
-        text = Money_manager.Format_number(item_price) + " $";
+        int sell_price = GB_script.Dic_item_sell[item_name];
+        text = "Buy " + Money_manager.Format_number(item_price) + " $";
+        text += "\nSell " + Money_manager.Format_number(sell_price) + "$";
         max_amount = Global_values.stockAmount;
         Money_manager.to_label(Tunit_price, text);
-        //amount of items switches between scenes
         
         //mod = Upgrades_script.storageMod(Upgrades_script.Dic_upgrades["Stockpile"].tier);
 

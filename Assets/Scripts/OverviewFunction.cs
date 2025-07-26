@@ -41,14 +41,26 @@ public class OverviewFunction : MonoBehaviour
 
     public void SceneInit()
     {
-        UpdateStockInfo();
+        //DisplayStats() Needs to be called first
+        //GetStockPrice() reports asset price to the server
         DisplayStats();
+        UpdateStockInfo();
     }
 
+    //Give the server Asset price
     private long GetStockPrice()
     {
         float procentage = 0.25f;
         long Property = Global_values.Starting_station_price;
+        long Assets = 0;
+        foreach (var keyvalue in GB_script.Dic_item_amount)
+        {
+            string name = keyvalue.Key;
+            long item_amount = keyvalue.Value;
+            Assets = GB_script.Dic_item_price[name] * item_amount;
+        }
+        Property += Assets;
+        netServer.UpdateAssetsRpc(Global_values.localID, Assets);
         long Profits = GB_script.ShortTermProfit + (long)(GB_script.AllProfit * procentage);
         return (Property + Profits);
     }

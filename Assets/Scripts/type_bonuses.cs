@@ -57,6 +57,7 @@ public class TemporaryTypeBonus : MonoBehaviour
     Chance_rng chan;
     GameObject[] Panels;
     GameObject[] Buttons;
+    GameObject ActivePanel;
 
 
     void CreateRNGWeights(List<TypeBonuses1> T)
@@ -94,9 +95,12 @@ public class TemporaryTypeBonus : MonoBehaviour
 
     void init_panels()
     {
-        GameLog.Message("init P99");
-        foreach (var x in Panels)
-            GameLog.Message($"{x} was found - P99");
+        if (Panels.Length == 0)
+        {
+            GameLog.Error("Modifier panels were not found");
+            return;
+        }
+
         for (int i = 0; i < Generate_amount; i++)
         {
             var Tbonus = refrenceType[Selection[i]];
@@ -114,31 +118,38 @@ public class TemporaryTypeBonus : MonoBehaviour
 
     public void VisualizeSelection(GameObject chosenPanel)
     {
+        ActivePanel = chosenPanel; //cache for future
         for (int i = 0; i < Generate_amount; i++)
         {
             var panel_graphics = Panels[i].GetComponent<Image>();
             if (Panels[i] != chosenPanel)
             {
-                //Gray
-                GameLog.Message($"{panel_graphics}");
+                GameLog.Message("not this one");
+                //Add effects here later
             }
             else
             {
-                //Add green borders
+                //Add green borders later
                 panel_graphics.color = Color.red;
             }
         }
 
-        //Disable buttons
         foreach (var obj in Buttons)
         {
             obj.SetActive(false);
         }
     }
 
+    //Called in Scene_switch CloseOverview()
     public void RestoreAndUpdateButtons()
     {
-        return;
+        GameLog.Message("Restoring Modifiers");
+        CreateSelection(Generate_amount);
+        init_panels();
+        foreach (var obj in Buttons)
+        {
+            obj.SetActive(true);
+        }
     }
 
     public static TemporaryTypeBonus reference;
@@ -152,76 +163,18 @@ public class TemporaryTypeBonus : MonoBehaviour
 
     void Start()
     {
-        //Read from one json file
-        //        string buyData = JSON_operations.Read_file("buy-type.json");
-        //        string popData = JSON_operations.Read_file("popularity-type.json");
-        //        buyType = JSON_operations.From<BuyTypeBonus>(buyData);
-        //        popularityType = JSON_operations.From<PopularTypeBonus>(popData);
-
         string typeData = JSON_operations.Read_file("type-declaration.json");
         typeBonus = JSON_operations.From<TypeBonuses1>(typeData);
         for (int i = 0; i < typeBonus.Count; i++)
             typeBonus[i].index = i;
 
         Chance_rng chan = Chance_rng.reference;
-        //put for loop inside the function
-        //        foreach (var e in buyType)
-        //            CreateRNGWeights(e.name, e.tier);
-        //        foreach (var e in popularityType)
-        //            CreateRNGWeights(e.name, e.tier);
-        //        GameLog.Message($"{totalV}");
-        CreateRNGWeights(typeBonus);
-        CreateSelection(Generate_amount);
-        foreach (var e in Selection)
-            GameLog.Message(e);
-
-        //TO DO
-        //Figure out a way to make everything easily expandable in the future ++
-        CreateTypeDictionary(typeBonus);
-        //Initialize panels
-        init_panels();
-        // mark which are active in the List - Pressing the button
-
-
+        CreateRNGWeights(typeBonus);     //Weights for creating selection
+        CreateTypeDictionary(typeBonus); //Dictionary for name reference
+        CreateSelection(Generate_amount);//Call everytime you need new types selected
+        init_panels();                   //push information onto all panels
 
     }
-
-    //    public int BuyBonus(string type_1, string type_2, string type_3, string prod)
-    //    {
-    //        int bonus = 0;
-    //        foreach (var bon in typeBonus)
-    //        {
-    //            List<string> T = bon.types;
-    //            if (stringExists(bon.Products, prod) == false)
-    //                return 0;
-    //            else
-    //            {
-    //                if (stringExists(T, type_1) == false && stringExists(T, type_2) == false && stringExists(T, type_3) == false)
-    //                    return 0;
-    //                else
-    //                {
-    //                    bonus += bon.bonus;
-    //                }
-    //            }
-    //        }
-    //        return bonus;
-    //    }
-    //
-    //    public int PopularityBonus(string type_1, string type_2, string type_3)
-    //    {
-    //        int bonus = 0;
-    //        foreach (var bon in typeBonus)
-    //        {
-    //            List<string> T = bon.types;
-    //            if (stringExists(T, type_1) == false && stringExists(T, type_2) == false && stringExists(T, type_3) == false)
-    //                return 0;
-    //            else
-    //            {
-    //                bonus += bon.bonus;
-    //            }
-    //        }
-    //        return bonus;
-    //    }
 
     //prod might be empty
     //Might add more arguments

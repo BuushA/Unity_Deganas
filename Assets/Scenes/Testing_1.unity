@@ -1043,6 +1043,9 @@ MonoBehaviour:
   Cash_label_2: {fileID: 550847697}
   Time_label_1: {fileID: 873092694}
   Time_label_2: {fileID: 1001667839}
+  ReadyStart: {fileID: 1742272497}
+  ReadyWork: {fileID: 2042857922}
+  ReadyExitOverview: {fileID: 762485895}
 --- !u!1 &68116594
 GameObject:
   m_ObjectHideFlags: 0
@@ -2705,8 +2708,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 6.19989, y: 169.2}
-  m_SizeDelta: {x: -46.801, y: 35.3873}
+  m_AnchoredPosition: {x: 6.5, y: 216}
+  m_SizeDelta: {x: -47, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &305069347
 GameObject:
@@ -7322,8 +7325,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 6.19989, y: 169.2}
-  m_SizeDelta: {x: -46.801, y: 35.3873}
+  m_AnchoredPosition: {x: 6.5, y: 216}
+  m_SizeDelta: {x: -47, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &816028642
 GameObject:
@@ -8052,9 +8055,9 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 127.0.0.1
-    Port: 7777
-    ServerListenAddress: 127.0.0.1
+    Address: 192.168.1.137
+    Port: 10800
+    ServerListenAddress: 0.0.0.0
   DebugSimulator:
     PacketDelayMS: 0
     PacketJitterMS: 0
@@ -10491,8 +10494,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1.9000015, y: -21.149002}
-  m_SizeDelta: {x: 5.9745, y: 38.9469}
+  m_AnchoredPosition: {x: 0, y: -80}
+  m_SizeDelta: {x: 72, y: 71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1186466186
 GameObject:
@@ -12591,6 +12594,7 @@ MonoBehaviour:
   GB_script: {fileID: 1244791800}
   Customers: {fileID: 2142264904}
   StockFunction: {fileID: 1299185033}
+  typesPanel: {fileID: 0}
   Work_UI: {fileID: 1148045221}
   Managment_UI: {fileID: 895797218}
   Managment_Internal_UI: {fileID: 481674331}
@@ -13718,8 +13722,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1.9000015, y: -21.149002}
-  m_SizeDelta: {x: 5.9745, y: 38.9469}
+  m_AnchoredPosition: {x: 0.0000038146973, y: -80}
+  m_SizeDelta: {x: 72, y: 71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1516068084
 GameObject:
@@ -14893,7 +14897,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637742426}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -8.772619}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0764008, y: 1.0764008, z: 1.0764008}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16694,6 +16698,7 @@ MonoBehaviour:
   startGame: {fileID: 344073568}
   scene_Manager: {fileID: 1446705934}
   GB_script: {fileID: 1244791800}
+  labelManager: {fileID: 65533646}
   canStart: 0
   ReadyCount: 0
 --- !u!114 &1792949783
@@ -18067,7 +18072,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1446705934}
         m_TargetAssemblyTypeName: Main_Scene_Manager, Assembly-CSharp
-        m_MethodName: switch_to_scene
+        m_MethodName: ResumeWork
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

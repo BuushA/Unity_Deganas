@@ -12,12 +12,14 @@ public class NetworkServer : NetworkBehaviour
     [SerializeField] networkstartgame startGame;
     [SerializeField] Main_Scene_Manager scene_Manager;
     [SerializeField] Global_values GB_script;
+    [SerializeField] LabelMan labelManager;
 
     public bool canStart = false;
     private List<bool> PlayerChecks = new List<bool>();
 
     List<long> AllProfit = new List<long>();
     List<long> ShortTermProfit = new List<long>();
+    List<long> BoughtAssets = new List<long>();
 
 
 
@@ -27,7 +29,7 @@ public class NetworkServer : NetworkBehaviour
     public enum Scenes
     {
         Start = 0,
-        Managment = 1,
+        ExitOverview = 1,
         Work = 2
     }
 
@@ -47,6 +49,7 @@ public class NetworkServer : NetworkBehaviour
     {
         InitilizeLongList(AllProfit);
         InitilizeLongList(ShortTermProfit);
+        InitilizeLongList(BoughtAssets);
         InitilizeBoolList(PlayerChecks);
 
     }
@@ -92,9 +95,11 @@ public class NetworkServer : NetworkBehaviour
         pingClientRpc();
     }
 
-    public void requestJoinedToServer(int id, int scene_id)
+    public void requestJoinedToServer(int scene_id, int label_id)
     {
-        playerJoinedRpc(id, scene_id);
+        int id = Global_values.localID;
+        //Upgrade scene_id customization later
+        playerJoinedRpc(id, scene_id, label_id);
     }
 
     public void requestUpdateProfit(int ClientId, long amount)
@@ -105,6 +110,13 @@ public class NetworkServer : NetworkBehaviour
     public void requestResetProfit()
     {
         ResetProfitRpc();
+    }
+
+    //Not secure, need to implement other check later
+    [Rpc(SendTo.Server)]
+    public void UpdateAssetsRpc(int ClientId, long sum)
+    {
+        BoughtAssets[ClientId] = sum;
     }
 
     [Rpc(SendTo.Server)]
@@ -119,11 +131,11 @@ public class NetworkServer : NetworkBehaviour
 
         for (int i = 0; i < player_count; i++)
         {
-            GameLog.Message($"All={AllProfit[i]} ; Short={ShortTermProfit[i]}");
+            GameLog.Message($"All={AllProfit[i]} ; Short={ShortTermProfit[i]}; ASSETS={BoughtAssets[i]}");
         }
-
+        
         float procentage = 0.25f;
-        long Property = Global_values.Starting_station_price;
+        long Property = Global_values.Starting_station_price + BoughtAssets[OpponentsID - 1];
         long Profits = ShortTermProfit[OpponentsID - 1] + (long)(AllProfit[OpponentsID - 1] * procentage);
 
         GetOpponentStockPriceRpc(Property, Profits, RpcTarget.Single((ulong)ClientId, RpcTargetUse.Temp));
@@ -143,7 +155,7 @@ public class NetworkServer : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    private void playerJoinedRpc(int id, int scene_id)
+    private void playerJoinedRpc(int id, int scene_id, int label_id)
     {
         id -= 1; //standardize, Only server is 0
                  //Upgrade later to allow deselecting
@@ -155,13 +167,13 @@ public class NetworkServer : NetworkBehaviour
         if (PlayerChecks[id] == false)
         {
             ReadyCount += 1;
-            UpdateReadyCountRpc();
+            UpdateReadyCountRpc(label_id);
             if (player_count == ReadyCount)
             {
+                ReadyCount = 0;
                 SendConfirmationRpc(scene_id);
                 for (int i = 0; i < player_count; i++)
                     PlayerChecks[i] = false;
-                ReadyCount = 0;
             }
             else
                 PlayerChecks[id] = true;
@@ -181,22 +193,29 @@ public class NetworkServer : NetworkBehaviour
     private void SendConfirmationRpc(int scene_id)
     {
         GameLog.Message("Everyone ready");
+        ReadyCount = 0;
         switch (scene_id)
         {
             case (int)Scenes.Start:
                 startGame.activateGame();
+                labelManager.UpdateReadyLabel((int)LabelMan.ReadyLabels.Start, ReadyCount, player_count);
                 break;
             case (int)Scenes.Work:
                 scene_Manager.activateWork();
+                labelManager.UpdateReadyLabel((int)LabelMan.ReadyLabels.Work, ReadyCount, player_count);
+                break;
+            case (int)Scenes.ExitOverview:
+                scene_Manager.CloseOverview();
+                labelManager.UpdateReadyLabel((int)LabelMan.ReadyLabels.ExitOverview, ReadyCount, player_count);
                 break;
         }
-        ReadyCount = 0;
     }
 
     [Rpc(SendTo.NotServer)]
-    private void UpdateReadyCountRpc()
+    private void UpdateReadyCountRpc(int label_id)
     {
         ReadyCount += 1;
+        labelManager.UpdateReadyLabel(label_id, ReadyCount, player_count);
     }
 
     //To make it completely server side for security
@@ -226,17 +245,13 @@ public class NetworkServer : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void UpdateTurnsRpc()
     {
-        if (Global_values.turns > 1 && (Global_values.turns % Global_values.TurnReset == 1))
-        {
-            OnTurnReset();
-        }
         Global_values.turns += 1;
     }
 
-    private void OnTurnReset()
+    public void OnTurnReset()
     {
         ResetProfitRpc();
-    }
+    }   
 
 
     [Rpc(SendTo.SpecifiedInParams)]
@@ -244,6 +259,7 @@ public class NetworkServer : NetworkBehaviour
     {
 
         Global_values.OpponentStock = Property + Profits;
+        //Not secure, easy to exploit but it needs a rewrite to the server side 
         GameLog.Message($"{rpcParams}");
         GameLog.Message($"Opponents stock is worth {Global_values.OpponentStock}");
     }

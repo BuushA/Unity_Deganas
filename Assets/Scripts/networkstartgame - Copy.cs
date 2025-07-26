@@ -11,6 +11,7 @@ public class networkstartgame : MonoBehaviour
     NetworkServer netServer;
     LabelMan labelManager;
 
+
     [SerializeField] TMP_Text Button_label;
     GameObject button;
     void Start()
@@ -31,7 +32,7 @@ public class networkstartgame : MonoBehaviour
     {
         button = clickedButton;
         int player_id = (int)NetworkManager.Singleton.LocalClientId;
-        netServer.requestJoinedToServer(player_id, (int)NetworkServer.Scenes.Start);
+        netServer.requestJoinedToServer((int)NetworkServer.Scenes.Start, (int)LabelMan.ReadyLabels.Start);
         Button_label.text = "Ready: " + netServer.ReadyCount.ToString() + "/" + NetworkServer.player_count.ToString();
         //    if (netServer.canStart == true)
         //    {

@@ -20,6 +20,17 @@ public class LabelMan : MonoBehaviour
     public static LabelMan reference;
     private Global_values GB_script;
 
+    [SerializeField] TMP_Text ReadyStart;
+    [SerializeField] TMP_Text ReadyWork;
+    [SerializeField] TMP_Text ReadyExitOverview;
+
+    public enum ReadyLabels
+    {
+        Start = 0,
+        Work = 1,
+        ExitOverview = 2
+    }
+
 
 
     void Awake()
@@ -126,17 +137,29 @@ public class LabelMan : MonoBehaviour
             pan.update_labels();
         }
     }
-
+    
     //Legacy method
     public string Format_amount(string item_name)
     {
         return GB_script.Dic_item_amount[item_name].ToString();
     }
 
-    public string LabelReadyCount()
+
+    public void UpdateReadyLabel(int label_id, int count, int players)
     {
-        NetworkServer netServer = NetworkServer.reference;
-        string text = "Ready: " + netServer.ReadyCount.ToString() + "/" + NetworkServer.player_count.ToString();
-        return text;
+        string msg = "Ready: " + count.ToString() + "/" + players.ToString();
+        switch (label_id)
+        {
+            case (int)ReadyLabels.Start:
+                ReadyStart.text = msg;
+                break;
+            case (int)ReadyLabels.Work:
+                ReadyWork.text = msg;
+                break;
+            case (int)ReadyLabels.ExitOverview:
+                ReadyExitOverview.text = msg;
+                break;
+        }
     }
+
 }

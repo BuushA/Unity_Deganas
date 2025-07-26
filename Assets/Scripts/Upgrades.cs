@@ -13,16 +13,32 @@ public class Upgrades : MonoBehaviour
     int QualityX = 2;
 
 
+    public enum Storage
+    {
+
+    }
+
+    public enum Turns
+    {
+
+    }
+
+    public enum Quality
+    {
+
+    }
+
+
     public static Upgrades reference;
     //dictionary of all the upgrades
     //ADD UPGRADES THROUGH THE CODE EDITOR
     //THE UNITY EDITOR WILL OVERIDE THEESE
-    public List<string> upgrades = new List<string>{"Stockpile", "Quality", "Time", "Efficiency"};
+    public List<string> upgrades = new List<string> { "Stockpile", "Quality", "Time", "Efficiency" };
     public class UP
     {
         public int tier;
         public int method_id;
-    }; 
+    };
 
     public Dictionary<string, UP> Dic_upgrades = new Dictionary<string, UP>();
 
@@ -37,31 +53,31 @@ public class Upgrades : MonoBehaviour
     private void create_upgrades_dic()
     {
         int upgr_len = upgrades.Count;
-        for(int i = 0 ; i < upgr_len; i++)
+        for (int i = 0; i < upgr_len; i++)
         {
-            Dic_upgrades.Add(upgrades[i], new UP {tier = 0, method_id = i});
+            Dic_upgrades.Add(upgrades[i], new UP { tier = 0, method_id = i });
         }
     }
 
     //call to get the modifier
     public int Modifier(int id, int tier)
     {
-        switch(id)
+        switch (id)
         {
             case 0:
-            return storageMod(tier);
+                return storageMod(tier);
 
             case 1:
-            return sellQuality(tier);
+                return sellQuality(tier);
 
             case 2:
-            return openTime(tier);
+                return openTime(tier);
 
             case 3:
-            return workerEfficiency(tier);
+                return workerEfficiency(tier);
 
             default:
-            return -1;
+                return -1;
         }
     }
 
@@ -69,40 +85,39 @@ public class Upgrades : MonoBehaviour
     //call on Upgrade_function buy to modify values
     public void Modify(int id, int tier)
     {
-        switch(id)
+        switch (id)
         {
             case 0:
-            GB_script.increase_stock(storageMod(tier));
-            break;
-            
+                GB_script.increase_stock(storageMod(tier));
+                break;
             //No modifications
             case 1:
-            return;
+                return;
 
             case 2:
-            return;
+                return;
 
             default:
-            return;
+                return;
         }
     }
 
 
 
     public void add_upgrade(string name)
-    {   
+    {
         upgrades.Add(name);
-        int new_id = upgrades.Count-1;
-        Dic_upgrades.Add(name, new UP {tier = 0, method_id = new_id});
+        int new_id = upgrades.Count - 1;
+        Dic_upgrades.Add(name, new UP { tier = 0, method_id = new_id });
     }
 
     public long priceMod(long price, string name)
     {
         int tier = Dic_upgrades[name].tier;
         int mod = 1;
-        
 
-        for(int i = 0; i < tier; i++)
+
+        for (int i = 0; i < tier; i++)
             mod *= 5;
 
         return price * mod;
@@ -111,81 +126,78 @@ public class Upgrades : MonoBehaviour
     //id - 0
     int storageMod(int tier)
     {
-        switch(tier)
+        switch (tier)
         {
-            case 0:
-            return 1;
+            case default:
+                return 1;
 
             case 1:
-            return storageX * 2;
+                return storageX * 2;
 
             case 2:
-            return storageX * storageX * storageX;
+                return storageX * storageX * storageX;
 
             case 3:
-            return storageX * 1000;
+                return storageX * 1000;
         }
         return -1;
     }
 
     int sellQuality(int tier)
     {
-        switch(tier)
+        switch (tier)
         {
-            case 0:
-            return 1;
+            case default:
+                return 1;
 
             case 1:
-            return QualityX;
+                return QualityX;
 
             case 2:
-            return QualityX+1;
+                return QualityX + 1;
 
             case 3:
-            return QualityX*2+1;
+                return QualityX * 2 + 1;
         }
 
         return -1;
     }
 
-    int openTime(int tier)
-    {
-        switch(tier)
-        {
-            case 0:
-            return 8;
-
-            case 1:
-            return 7;
-
-            case 2:
-            return 6;
-
-            case 3:
-            return 5;
-        }
-        return -1;
-    }
 
 
     int workerEfficiency(int tier)
     {
-        switch(tier)
+        switch (tier)
         {
-            case 0:
-            return 5;
+            case default:
+                return 5;
 
             case 1:
-            return 4;
+                return 4;
 
             case 2:
-            return 3;
-
+                return 3;
             //update for more effects
             case 3:
-            return 2;
+                return 2;
         }
         return -1;
+    }
 
+
+    private int UpgradeValue(int tier, int primary, int second, int third, int fourth)
+    {
+        switch (tier)
+        {
+            case default:
+                return primary;
+            case 1:
+                return second;
+            case 2:
+                return third;
+            case 3:
+                return fourth;
+        }
+        return -1;
     }
 }
